@@ -38,6 +38,12 @@ public class AuthController {
         return res;
     }
 
+    @GetMapping("/validate")
+    public ApiResponse validate(@RequestHeader("Authorization") String token) throws  BaseException{
+       ApiResponse res = authService.validate(token);
+       return res;
+    }
+
     @PostMapping("/send-token-reset-password")
     public ApiResponse sendTokenResetPassword(@RequestBody UserBean userBean) throws BaseException {
         ApiResponse res = authService.sendTokenResetPassword(userBean);

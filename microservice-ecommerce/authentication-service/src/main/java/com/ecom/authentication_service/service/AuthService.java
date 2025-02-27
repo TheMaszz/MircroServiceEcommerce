@@ -9,14 +9,13 @@ import com.ecom.authentication_service.dto.UserSigninDTO;
 import com.ecom.authentication_service.exception.AuthException;
 import com.ecom.authentication_service.exception.BaseException;
 import com.ecom.authentication_service.repository.UserRepository;
-import com.ecom.authentication_service.util.TokenUtil;
+import com.ecom.authentication_service.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 
 @Service
@@ -24,14 +23,15 @@ public class AuthService extends BaseController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
     private final EmailService emailService;
+    private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService, EmailService emailService) {
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.tokenService = tokenService;
         this.emailService = emailService;
+        this.jwtUtil = jwtUtil;
     }
 
     public ApiResponse signup(UserBean userBean) throws BaseException {
@@ -74,9 +74,9 @@ public class AuthService extends BaseController {
             }
 
             UserSigninDTO dto = new UserSigninDTO();
-            dto.setToken(tokenService.tokenize(user));
+            dto.setToken(jwtUtil.generateToken(user.getUsername()));
             dto.setId(user.getId());
-            dto.setUsername(user.getUsernameOrEmail());
+            dto.setUsername(user.getUsername());
             dto.setEmail(user.getEmail());
             res.setData(dto);
         } catch (Exception e) {
@@ -92,7 +92,9 @@ public class AuthService extends BaseController {
             String token = req.getHeader("Authorization");
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
-                tokenService.invalidateToken(token);
+                if (jwtUtil.validateToken(token)) {
+                    jwtUtil.blacklistToken(token);
+                }
             }
         } catch (Exception e) {
             this.checkException(e, res);
@@ -113,7 +115,7 @@ public class AuthService extends BaseController {
                 throw new AuthException("not.found.user", "not found user");
             }
 
-            user.setToken_reset_password(TokenUtil.generateToken());
+            user.setToken_reset_password(jwtUtil.generatePasswordResetToken(String.valueOf(user.getId())));
             user.setToken_reset_password_expired(nextXMinute(30));
 
             userRepository.updateUser(user);
@@ -121,6 +123,22 @@ public class AuthService extends BaseController {
             user = userRepository.findById(user.getId());
 
             sendResetPasswordEmail(user);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse validate(@RequestHeader("Authorization") String token) throws BaseException{
+        ApiResponse res = new ApiResponse();
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+            boolean isValid = jwtUtil.validateToken(token);
+            if(!isValid){
+                throw new AuthException("invalid.token", "Invalid Token");
+            }
         } catch (Exception e) {
             this.checkException(e, res);
         }
@@ -158,7 +176,7 @@ public class AuthService extends BaseController {
                 throw new AuthException("not.found.user", "not found user");
             }
 
-            user.setToken_reset_password(TokenUtil.generateToken());
+            user.setToken_reset_password(jwtUtil.generatePasswordResetToken(String.valueOf(user.getId())));
             user.setToken_reset_password_expired(nextXMinute(30));
 
             userRepository.updateUser(user);
@@ -195,5 +213,7 @@ public class AuthService extends BaseController {
             throw new RuntimeException(e);
         }
     }
+
+
 
 }

@@ -1,70 +1,77 @@
 package com.ecom.authentication_service.config.token;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.ObjectUtils;
-
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.ecom.authentication_service.service.TokenService;
-
+import com.ecom.authentication_service.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.GenericFilter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-public class TokenFilter extends GenericFilter {
+import java.io.IOException;
+import java.util.Collections;
 
-    private final TokenService tokenService;
+public class TokenFilter extends OncePerRequestFilter {
 
-    public TokenFilter(TokenService tokenService) {
-        this.tokenService = tokenService;
+    private final JwtUtil jwtUtil;
+
+    public TokenFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
         String authorization = request.getHeader("Authorization");
 
-        if (ObjectUtils.isEmpty(authorization)) {
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        }
-
-        if (!authorization.startsWith("Bearer")) {
-            filterChain.doFilter(servletRequest, servletResponse);
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
         String token = authorization.substring(7);
-        DecodedJWT decoded = tokenService.verify(token);
 
-        if (decoded == null) {
-            filterChain.doFilter(servletRequest, servletResponse);
+        try {
+            // ตรวจสอบว่า Token อยู่ใน blacklist หรือไม่
+            if (jwtUtil.isTokenBlacklisted(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            Claims claims = jwtUtil.parseToken(token);
+            if (claims == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            String principal = claims.getSubject();
+            String role = claims.get("role", String.class);
+
+            if (principal == null || role == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            // สร้าง Authentication Object
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    principal, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
+
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            // เซ็ต Security Context
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        String principal = decoded.getClaim("principal").asString();
-        String role = decoded.getClaim("role").asString();
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role));
-
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal,
-                "(protected)", authorities);
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(authentication);
-
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
     }
+
 }
