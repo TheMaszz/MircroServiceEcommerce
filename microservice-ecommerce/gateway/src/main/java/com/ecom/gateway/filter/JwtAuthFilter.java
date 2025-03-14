@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,10 +32,13 @@ import static com.ecom.gateway.config.SecurityConfig.PUBLIC;
 
 @Component
 public class JwtAuthFilter implements WebFilter, Ordered {
-    private static final String SECRET_KEY = "m8E3Xq9vTfBcLzRkHjWnP2sY5bG7UoI1Q6yJ4dKpAtMxVrFeZgNlOhC0iSauDwv";
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
-    private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    private final Key key ;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    public JwtAuthFilter(@Value("${app.security.secret-key}") String secretKey){
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
