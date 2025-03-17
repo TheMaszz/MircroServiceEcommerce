@@ -1,11 +1,9 @@
 package com.ecom.user_service.repository;
 
+import com.ecom.user_service.bean.AddressBean;
 import com.ecom.user_service.bean.UserBean;
 import com.ecom.user_service.exception.BaseException;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +53,34 @@ public interface UserRepository {
             "WHERE id = #{id}"
     })
     public void changeRole(Long id, Long role) throws BaseException;
+
+    @Select({
+            "SELECT * FROM address WHERE id = #{id}"
+    })
+    public AddressBean getAddressById(Long id) throws BaseException;
+
+    @Select({
+            "SELECT * FROM address WHERE user_id = #{userId}"
+    })
+    public List<AddressBean> getAddressByUserId(Long userId) throws BaseException;
+
+    @Insert({
+            "INSERT INTO address",
+            "(name, address, phone, description, user_id)",
+            "VALUES",
+            "(#{name}, #{address}, #{phone}, #{description}, #{user_id})"
+    })
+    public void createAddress(AddressBean addressBean) throws BaseException;
+
+    @Update({
+            "UPDATE address SET",
+            "name = #{name},",
+            "address = #{address},",
+            "phone = #{phone},",
+            "description = #{description}",
+            "WHERE id = #{id}"
+    })
+    public void updateAddress(AddressBean addressBean) throws BaseException;
 
 
 }

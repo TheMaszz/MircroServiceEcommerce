@@ -1,5 +1,6 @@
 package com.ecom.user_service.service;
 
+import com.ecom.user_service.bean.AddressBean;
 import com.ecom.user_service.bean.ApiResponse;
 import com.ecom.user_service.bean.UserBean;
 import com.ecom.user_service.controller.BaseController;
@@ -123,6 +124,58 @@ public class UserService extends BaseController {
         }
         return res;
     }
+
+    public ApiResponse getMyAddress(
+            HttpServletRequest request
+    ) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try{
+            String userId = request.getHeader("X-User-Id");
+            List<AddressBean> address = userRepository.getAddressByUserId(Long.valueOf(userId));
+
+            res.setData(address);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse createAddress(
+            HttpServletRequest request,
+            AddressBean addressBean
+    ) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try {
+            String userId = request.getHeader("X-User-Id");
+            addressBean.setUser_id(Long.valueOf(userId));
+
+            userRepository.createAddress(addressBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse updateAddress(
+            Long id,
+            AddressBean addressBean
+    ) throws BaseException{
+        ApiResponse res = new ApiResponse();
+        try {
+            AddressBean address = userRepository.getAddressById(id);
+            if(address == null){
+                throw new UserException("address.not.found", "Address not found");
+            }
+
+            addressBean.setId(id);
+            userRepository.updateAddress(addressBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+
 
 
 }

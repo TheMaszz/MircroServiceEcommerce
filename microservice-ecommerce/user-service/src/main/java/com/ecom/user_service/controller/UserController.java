@@ -1,5 +1,6 @@
 package com.ecom.user_service.controller;
 
+import com.ecom.user_service.bean.AddressBean;
 import com.ecom.user_service.bean.ApiResponse;
 import com.ecom.user_service.bean.UserBean;
 import com.ecom.user_service.exception.BaseException;
@@ -10,8 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/apiendpoint/user")
@@ -67,6 +66,33 @@ public class UserController {
     @PutMapping("/changeRole/{id}")
     public ApiResponse changeRole() throws BaseException {
         ApiResponse res = new ApiResponse();
+        return res;
+    }
+
+    @GetMapping("/address/my")
+    public ApiResponse getMyAddress(
+            HttpServletRequest request
+    ) throws BaseException {
+        ApiResponse res = userService.getMyAddress(request);
+        return res;
+    }
+
+    @PostMapping("/address/create")
+    public ApiResponse createAddress(
+            HttpServletRequest request,
+            @RequestBody AddressBean addressBean
+    ) throws BaseException {
+        ApiResponse res = userService.createAddress(request, addressBean);
+        return res;
+    }
+
+    @PutMapping("/address/update/{id}")
+    public ApiResponse updateAddress(
+            HttpServletRequest request,
+            @PathVariable Long id,
+            @RequestBody AddressBean addressBean
+    ) throws BaseException {
+        ApiResponse res = userService.updateAddress(id, addressBean);
         return res;
     }
 
