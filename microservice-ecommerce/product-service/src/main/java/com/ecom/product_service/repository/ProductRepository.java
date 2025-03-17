@@ -2,7 +2,7 @@ package com.ecom.product_service.repository;
 
 import com.ecom.product_service.bean.ProductBean;
 import com.ecom.product_service.bean.ProductImageBean;
-import com.ecom.product_service.exeption.BaseException;
+import com.ecom.product_service.exception.BaseException;
 import org.apache.ibatis.annotations.*;
 
 import java.util.HashMap;
@@ -30,10 +30,9 @@ public interface ProductRepository {
             "<if test='search != null and search != \"\"'>",
             " AND p.name LIKE CONCAT('%', #{search}, '%')",
             "</if>",
-            "<if test='sorting != null and sorting != \"\" and sort_type != null and sort_type != \"\"'>",
-            " ORDER BY ${sorting} ${sort_type}",
+            "<if test='isCount == false'>",
+            " Order by ${sorting} ${sort_type} limit #{start}, #{end}",
             "</if>",
-            "LIMIT #{start}, #{end}",
             "</script>"
     })
     @Results(
@@ -53,9 +52,6 @@ public interface ProductRepository {
             }
     )
     List<ProductBean> findALlProduct(HashMap<String, Object> params) throws BaseException;
-
-    @Select("SELECT COUNT(*) FROM product")
-    public int findCountProduct() throws BaseException;
 
     @Select({
             "<script>",
@@ -124,25 +120,6 @@ public interface ProductRepository {
             "</script>"
     })
     public void createProductImage(List<ProductImageBean> productImages) throws BaseException;
-
-    @Update({
-            "<script>",
-            "UPDATE product_image",
-            "<set>",
-            "  image_url = CASE",
-            "  <foreach collection='productImages' item='item'>",
-            "    WHEN id = #{item.id} THEN #{item.imageUrl}",
-            "  </foreach>",
-            "  END,",
-            "  updated_at = NOW()",
-            "</set>",
-            "WHERE id IN",
-            "  <foreach collection='productImages' item='item' open='(' separator=',' close=')'>",
-            "    #{item.id}",
-            "  </foreach>",
-            "</script>"
-    })
-    public void updateProductImage(@Param("productImages") List<ProductImageBean> productImages) throws BaseException;
 
     @Delete({
             "<script>",

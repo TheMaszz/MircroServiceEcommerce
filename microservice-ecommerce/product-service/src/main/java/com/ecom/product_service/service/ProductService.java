@@ -4,9 +4,10 @@ import com.ecom.product_service.bean.ApiResponse;
 import com.ecom.product_service.bean.ProductBean;
 import com.ecom.product_service.bean.ProductImageBean;
 import com.ecom.product_service.controller.BaseController;
-import com.ecom.product_service.exeption.BaseException;
-import com.ecom.product_service.exeption.ProductException;
+import com.ecom.product_service.exception.BaseException;
+import com.ecom.product_service.exception.ProductException;
 import com.ecom.product_service.repository.ProductRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,15 +35,17 @@ public class ProductService extends BaseController {
         ApiResponse res = new ApiResponse();
         HashMap<String, Object> params = new HashMap<>();
         try {
-            if(search != null && !search.isEmpty()){
+            if (search != null && !search.isEmpty()) {
                 params.put("search", search);
             }
             this.pagination(page_number, page_size, sort, sort_type, params);
+            params.put("isCount", false);
             List<ProductBean> products = productRepository.findALlProduct(params);
-            int productsCount = productRepository.findCountProduct();
+            params.put("isCount", true);
+            List<ProductBean> productsCount = productRepository.findALlProduct(params);
             res.getPaginate().setLimit(page_size);
             res.getPaginate().setPage(page_number);
-            res.getPaginate().setTotal(productsCount);
+            res.getPaginate().setTotal(productsCount.size());
 
             res.setData(products);
         } catch (Exception e) {
@@ -54,8 +57,8 @@ public class ProductService extends BaseController {
     public ApiResponse getProductById(Long id) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
-            ProductBean product =  productRepository.findProductById(id);
-            if(product == null){
+            ProductBean product = productRepository.findProductById(id);
+            if (product == null) {
                 throw new ProductException("not.found", "product not found");
             }
             res.setData(product);
@@ -65,9 +68,21 @@ public class ProductService extends BaseController {
         return res;
     }
 
-    public ApiResponse createProduct(ProductBean productBean, List<MultipartFile> files) throws BaseException {
+    public ApiResponse createProduct(
+            ProductBean productBean,
+            List<MultipartFile> files,
+            HttpServletRequest request
+    ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+            productBean.setCreated_by(Long.valueOf(userId));
+
+            if (!role.equals("ADMIN")) {
+                throw new ProductException("no.permission.create", "you no permission to create");
+            }
+
             if (files == null || files.isEmpty()) {
                 throw new ProductException("image.at-least", "image at least 1");
             }
@@ -103,9 +118,25 @@ public class ProductService extends BaseController {
         return res;
     }
 
-    public ApiResponse updateProduct(Long id, ProductBean productBean, List<MultipartFile> files) throws BaseException {
+    public ApiResponse updateProduct(
+            Long id, ProductBean productBean,
+            List<MultipartFile> files,
+            HttpServletRequest request
+    ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
+            ProductBean product = productRepository.findProductById(id);
+            if (product == null) {
+                throw new ProductException("not.found", "product not found");
+            }
+
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+            productBean.setCreated_by(Long.valueOf(userId));
+
+            if (!role.equals("ADMIN")) {
+                throw new ProductException("no.permission.update", "you no permission to update");
+            }
 
             if ((files == null || files.isEmpty()) && productBean.getProduct_image().isEmpty()) {
                 throw new ProductException("image.at-least", "image at least 1");
@@ -170,9 +201,25 @@ public class ProductService extends BaseController {
         return res;
     }
 
-    public ApiResponse deleteProduct(Long id) throws BaseException {
+    public ApiResponse deleteProduct(
+            Long id,
+            HttpServletRequest request
+    ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
+            ProductBean product = productRepository.findProductById(id);
+            if (product == null) {
+                throw new ProductException("not.found", "product not found");
+            }
+
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+
+
+            if (!role.equals("ADMIN")) {
+                throw new ProductException("no.permission.update", "you no permission to update");
+            }
+
             fileStorageService.deleteFolder("products", id);
             productRepository.deleteProduct(id);
 

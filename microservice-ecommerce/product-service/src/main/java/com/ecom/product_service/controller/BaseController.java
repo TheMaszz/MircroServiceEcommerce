@@ -2,7 +2,7 @@ package com.ecom.product_service.controller;
 
 
 import com.ecom.product_service.bean.ApiResponse;
-import com.ecom.product_service.exeption.BaseException;
+import com.ecom.product_service.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

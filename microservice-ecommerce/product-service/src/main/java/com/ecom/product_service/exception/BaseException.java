@@ -1,4 +1,4 @@
-package com.ecom.product_service.exeption;
+package com.ecom.product_service.exception;
 
 public abstract class BaseException extends Exception {
 

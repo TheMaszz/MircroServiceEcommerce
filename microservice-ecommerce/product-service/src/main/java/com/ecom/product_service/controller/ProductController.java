@@ -2,7 +2,7 @@ package com.ecom.product_service.controller;
 
 import com.ecom.product_service.bean.ApiResponse;
 import com.ecom.product_service.bean.ProductBean;
-import com.ecom.product_service.exeption.BaseException;
+import com.ecom.product_service.exception.BaseException;
 import com.ecom.product_service.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,13 +51,10 @@ public class ProductController {
             @RequestPart("product") String productJson,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) throws BaseException, JsonProcessingException {
-        String userId = request.getHeader("X-User-Id");
-
         ObjectMapper objectMapper = new ObjectMapper();
         ProductBean productBean = objectMapper.readValue(productJson, ProductBean.class);
-        productBean.setCreated_by(Long.valueOf(userId));
 
-        ApiResponse res = productService.createProduct(productBean, files);
+        ApiResponse res = productService.createProduct(productBean, files, request);
         return res;
     }
 
@@ -72,17 +69,17 @@ public class ProductController {
 
         ObjectMapper objectMapper = new ObjectMapper();
         ProductBean productBean = objectMapper.readValue(productJson, ProductBean.class);
-        productBean.setUpdated_by(Long.valueOf(userId));
 
-        log.info("productBean: {}", productBean);
-
-        ApiResponse res = productService.updateProduct(id, productBean, files);
+        ApiResponse res = productService.updateProduct(id, productBean, files, request);
         return res;
     }
 
     @DeleteMapping("/delete/{id}")
-    public ApiResponse deleteProduct(@PathVariable Long id) throws BaseException {
-        ApiResponse res = productService.deleteProduct(id);
+    public ApiResponse deleteProduct(
+            HttpServletRequest request,
+            @PathVariable Long id
+    ) throws BaseException {
+        ApiResponse res = productService.deleteProduct(id, request);
         return res;
     }
 
