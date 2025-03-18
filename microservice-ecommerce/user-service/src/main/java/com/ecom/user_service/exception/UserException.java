@@ -1,5 +1,7 @@
 package com.ecom.user_service.exception;
 
+import com.ecom.common.exception.BaseException;
+
 public class UserException extends BaseException {
 
   public UserException(String code, String message) {

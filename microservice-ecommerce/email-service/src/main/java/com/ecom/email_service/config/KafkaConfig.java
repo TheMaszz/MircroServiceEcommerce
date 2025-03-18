@@ -1,6 +1,6 @@
 package com.ecom.email_service.config;
 
-import com.ecom.common.EmailRequest;
+import com.ecom.common.bean.EmailRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;

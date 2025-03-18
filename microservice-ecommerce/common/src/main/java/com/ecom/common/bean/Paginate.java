@@ -1,4 +1,4 @@
-package com.ecom.payment_service.bean;
+package com.ecom.common.bean;
 
 import lombok.Data;
 

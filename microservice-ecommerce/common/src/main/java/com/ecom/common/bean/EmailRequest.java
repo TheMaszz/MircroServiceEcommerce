@@ -1,4 +1,4 @@
-package com.ecom.common;
+package com.ecom.common.bean;
 
 import lombok.Data;
 

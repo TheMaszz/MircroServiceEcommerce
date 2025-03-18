@@ -1,10 +1,10 @@
 package com.ecom.auth_service.service;
 
 
-import com.ecom.auth_service.controller.BaseController;
-import com.ecom.auth_service.exception.BaseException;
 import com.ecom.auth_service.exception.EmailException;
-import com.ecom.common.EmailRequest;
+import com.ecom.common.bean.EmailRequest;
+import com.ecom.common.controller.BaseController;
+import com.ecom.common.exception.BaseException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;

@@ -1,10 +1,10 @@
 package com.ecom.product_service.service;
 
-import com.ecom.product_service.bean.ApiResponse;
-import com.ecom.product_service.bean.ProductBean;
-import com.ecom.product_service.bean.ProductImageBean;
-import com.ecom.product_service.controller.BaseController;
-import com.ecom.product_service.exception.BaseException;
+import com.ecom.common.bean.ApiResponse;
+import com.ecom.common.bean.ProductBean;
+import com.ecom.common.bean.ProductImageBean;
+import com.ecom.common.controller.BaseController;
+import com.ecom.common.exception.BaseException;
 import com.ecom.product_service.exception.ProductException;
 import com.ecom.product_service.repository.ProductRepository;
 import jakarta.servlet.http.HttpServletRequest;

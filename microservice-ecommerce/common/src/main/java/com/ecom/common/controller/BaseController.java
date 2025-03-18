@@ -1,7 +1,7 @@
-package com.ecom.order_service.controller;
+package com.ecom.common.controller;
 
-import com.ecom.order_service.bean.ApiResponse;
-import com.ecom.order_service.exception.BaseException;
+import com.ecom.common.bean.ApiResponse;
+import com.ecom.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

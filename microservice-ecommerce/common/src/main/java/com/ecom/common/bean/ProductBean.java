@@ -1,7 +1,6 @@
-package com.ecom.product_service.bean;
+package com.ecom.common.bean;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

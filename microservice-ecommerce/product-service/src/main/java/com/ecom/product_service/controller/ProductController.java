@@ -1,8 +1,8 @@
 package com.ecom.product_service.controller;
 
-import com.ecom.product_service.bean.ApiResponse;
-import com.ecom.product_service.bean.ProductBean;
-import com.ecom.product_service.exception.BaseException;
+import com.ecom.common.bean.ApiResponse;
+import com.ecom.common.bean.ProductBean;
+import com.ecom.common.exception.BaseException;
 import com.ecom.product_service.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

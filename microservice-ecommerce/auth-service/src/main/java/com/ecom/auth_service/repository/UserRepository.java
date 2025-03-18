@@ -1,8 +1,7 @@
 package com.ecom.auth_service.repository;
 
-
-import com.ecom.auth_service.bean.UserBean;
-import com.ecom.auth_service.exception.BaseException;
+import com.ecom.common.bean.UserBean;
+import com.ecom.common.exception.BaseException;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

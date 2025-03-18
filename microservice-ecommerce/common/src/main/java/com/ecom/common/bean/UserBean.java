@@ -1,4 +1,4 @@
-package com.ecom.auth_service.bean;
+package com.ecom.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -17,6 +17,8 @@ public class UserBean {
     private Integer role;
     private Date created_at;
     private Date updated_at;
+    private Long created_by;
+    private Long updated_by;
     private Date last_login;
     private String token_reset_password;
     private Date token_reset_password_expired;

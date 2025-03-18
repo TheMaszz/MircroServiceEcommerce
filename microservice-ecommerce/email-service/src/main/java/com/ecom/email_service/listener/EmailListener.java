@@ -1,6 +1,6 @@
 package com.ecom.email_service.listener;
 
-import com.ecom.common.EmailRequest;
+import com.ecom.common.bean.EmailRequest;
 import com.ecom.email_service.service.EmailService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.annotation.KafkaListener;

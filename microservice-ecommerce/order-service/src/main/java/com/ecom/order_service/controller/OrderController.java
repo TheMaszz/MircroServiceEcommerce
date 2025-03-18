@@ -1,9 +1,9 @@
 package com.ecom.order_service.controller;
 
-import com.ecom.order_service.bean.ApiResponse;
-import com.ecom.order_service.bean.OrderBean;
-import com.ecom.order_service.exception.BaseException;
+import com.ecom.common.bean.ApiResponse;
+import com.ecom.common.bean.OrderBean;
 import com.ecom.order_service.repository.OrderRepository;
+import com.thoughtworks.xstream.core.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 

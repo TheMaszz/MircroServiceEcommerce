@@ -1,8 +1,9 @@
 package com.ecom.user_service.repository;
 
-import com.ecom.user_service.bean.AddressBean;
-import com.ecom.user_service.bean.UserBean;
-import com.ecom.user_service.exception.BaseException;
+
+import com.ecom.common.bean.AddressBean;
+import com.ecom.common.bean.UserBean;
+import com.ecom.common.exception.BaseException;
 import org.apache.ibatis.annotations.*;
 
 import java.util.HashMap;

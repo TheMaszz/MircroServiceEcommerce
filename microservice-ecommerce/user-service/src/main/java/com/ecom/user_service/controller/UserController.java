@@ -1,9 +1,9 @@
 package com.ecom.user_service.controller;
 
-import com.ecom.user_service.bean.AddressBean;
-import com.ecom.user_service.bean.ApiResponse;
-import com.ecom.user_service.bean.UserBean;
-import com.ecom.user_service.exception.BaseException;
+import com.ecom.common.bean.AddressBean;
+import com.ecom.common.bean.ApiResponse;
+import com.ecom.common.bean.UserBean;
+import com.ecom.common.exception.BaseException;
 import com.ecom.user_service.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

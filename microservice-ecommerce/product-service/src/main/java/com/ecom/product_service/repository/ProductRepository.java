@@ -1,8 +1,8 @@
 package com.ecom.product_service.repository;
 
-import com.ecom.product_service.bean.ProductBean;
-import com.ecom.product_service.bean.ProductImageBean;
-import com.ecom.product_service.exception.BaseException;
+import com.ecom.common.bean.ProductBean;
+import com.ecom.common.bean.ProductImageBean;
+import com.thoughtworks.xstream.core.BaseException;
 import org.apache.ibatis.annotations.*;
 
 import java.util.HashMap;
