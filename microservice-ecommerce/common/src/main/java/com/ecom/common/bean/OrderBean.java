@@ -10,6 +10,7 @@ public class OrderBean {
     private Long user_id;
     private Long address_id;
     private String stage;
+    private String payment_status;
     private Double total_amount;
     private String created_at;
     private String updated_at;
@@ -23,7 +24,6 @@ public class OrderBean {
 
         // Detail
         private ProductBean productDetail;
-
     }
 
 }

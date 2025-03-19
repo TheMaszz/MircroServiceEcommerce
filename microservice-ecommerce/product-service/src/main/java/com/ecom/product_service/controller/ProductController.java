@@ -34,7 +34,6 @@ public class ProductController {
             @RequestParam(name = "sort", required = false) String sort,
             @RequestParam(name = "sort_type", required = false) String sort_type
     ) throws BaseException {
-
         ApiResponse res = productService.getAllProduct(search, page_number, page_size, sort, sort_type);
         return res;
     }

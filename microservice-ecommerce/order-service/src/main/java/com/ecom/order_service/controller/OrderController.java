@@ -2,8 +2,8 @@ package com.ecom.order_service.controller;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
-import com.ecom.order_service.repository.OrderRepository;
-import com.thoughtworks.xstream.core.BaseException;
+import com.ecom.common.exception.BaseException;
+import com.ecom.order_service.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,17 +11,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/apiendpoint/order")
 public class OrderController {
 
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
-    public OrderController(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @GetMapping("/getMyOrders")
+    public ApiResponse getMyOrders(
+            HttpServletRequest request,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "page_number", required = false) int page_number,
+            @RequestParam(name = "page_size", required = false) int page_size,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "sort_type", required = false) String sort_type
+    ) throws BaseException {
+        ApiResponse res = orderService.getMyOrders(request, search, page_number, page_size, sort, sort_type);
+        return res;
     }
 
     @GetMapping("/getAll")
     public ApiResponse getALl(
-            HttpServletRequest request
+            HttpServletRequest request,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "page_number", required = false) int page_number,
+            @RequestParam(name = "page_size", required = false) int page_size,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "sort_type", required = false) String sort_type
     ) throws BaseException {
-        ApiResponse res = new ApiResponse();
+        ApiResponse res = orderService.getAll(search, page_number, page_size, sort, sort_type);
         return res;
     }
 
@@ -30,7 +48,7 @@ public class OrderController {
             HttpServletRequest request,
             @PathVariable Long id
     ) throws BaseException {
-        ApiResponse res = new ApiResponse();
+        ApiResponse res = orderService.getById(id);
         return res;
     }
 
@@ -39,7 +57,7 @@ public class OrderController {
             HttpServletRequest request,
             @RequestBody OrderBean orderBean
     ) throws BaseException {
-        ApiResponse res = new ApiResponse();
+        ApiResponse res = orderService.createOrder(orderBean);
         return res;
     }
 
@@ -49,17 +67,27 @@ public class OrderController {
             @PathVariable Long id,
             @RequestBody OrderBean orderBean
     ) throws BaseException {
-        ApiResponse res = new ApiResponse();
+        ApiResponse res = orderService.updateOrder(id, orderBean);
         return res;
     }
 
-    @PutMapping("/pushStage/{id}")
-    public ApiResponse pushStage(
+    @PutMapping("/updateStage/{id}")
+    public ApiResponse updateStage(
             HttpServletRequest request,
             @PathVariable Long id,
             @RequestBody OrderBean orderBean
     ) throws BaseException {
-        ApiResponse res = new ApiResponse();
+        ApiResponse res = orderService.updateStage(id, orderBean);
+        return res;
+    }
+
+    @PutMapping("/updatePaymentStatus/{id}")
+    public ApiResponse updatePaymentStatus(
+            HttpServletRequest request,
+            @PathVariable Long id,
+            @RequestBody OrderBean orderBean
+    ) throws BaseException {
+        ApiResponse res = orderService.updatePaymentStatus(id, orderBean);
         return res;
     }
 
