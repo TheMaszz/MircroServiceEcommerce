@@ -1,14 +1,14 @@
 package com.ecom.auth_service.service;
 
 import ch.qos.logback.core.util.StringUtil;
-import com.ecom.auth_service.dto.ResetPasswordDTO;
-import com.ecom.auth_service.dto.UserSigninDTO;
 import com.ecom.auth_service.exception.AuthException;
 import com.ecom.auth_service.repository.UserRepository;
 import com.ecom.auth_service.util.JwtUtil;
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.UserBean;
 import com.ecom.common.controller.BaseController;
+import com.ecom.common.dto.ResetPasswordDTO;
+import com.ecom.common.dto.UserSigninDTO;
 import com.ecom.common.exception.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;

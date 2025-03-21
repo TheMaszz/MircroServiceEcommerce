@@ -1,4 +1,4 @@
-package com.ecom.auth_service.dto;
+package com.ecom.common.dto;
 
 import lombok.Data;
 
