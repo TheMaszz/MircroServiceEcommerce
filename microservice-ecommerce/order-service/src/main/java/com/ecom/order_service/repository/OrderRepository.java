@@ -199,11 +199,10 @@ public interface OrderRepository {
 
     @Update({
             "UPDATE order_master SET",
-            "user_id = #{user_id},",
-            "address_id = #{address_id},",
             "stage = #{stage},",
             "payment_status = #{payment_status},",
-            "total_amount = #{total_amount},",
+            "stripe_session_id = #{stripe_session_id},",
+            "stripe_checkout_url = #{stripe_checkout_url},",
             "updated_at = now()",
             "WHERE id = #{id}"
     })
@@ -225,7 +224,9 @@ public interface OrderRepository {
     })
     public void updatePaymentStatus(@Param("id") Long id, @Param("payment_status") String payment_status) throws BaseException;
 
-
-
+    @Select({
+            "SELECT * FROM order_master WHERE session_id = #{sessionId}"
+    })
+    public OrderBean findBySessionId(String sessionId) throws BaseException;
 
 }

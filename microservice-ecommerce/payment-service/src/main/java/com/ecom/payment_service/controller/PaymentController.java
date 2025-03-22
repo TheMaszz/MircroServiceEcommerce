@@ -5,10 +5,7 @@ import com.ecom.common.dto.StripeResponse;
 import com.ecom.payment_service.service.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,11 +19,23 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping("/checkout")
+    @PostMapping("/checkout/{orderId}")
     public ResponseEntity<StripeResponse> checkout(
-            @RequestBody List<ProductRequest> productRequest
+            @RequestBody List<ProductRequest> productRequest,
+            @PathVariable Long orderId
     ) {
-        StripeResponse stripeResponse = paymentService.checkoutProducts(productRequest);
+        StripeResponse stripeResponse = paymentService.checkoutProducts(productRequest, orderId);
         return ResponseEntity.status(HttpStatus.OK).body(stripeResponse);
     }
+
+    @GetMapping("/webhook")
+    public ResponseEntity<String> handleStripeEvent(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String sigHeader
+    ) {
+        String res = paymentService.handleStripeEvent(payload, sigHeader);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+
 }

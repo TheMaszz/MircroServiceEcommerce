@@ -128,6 +128,7 @@ public class OrderService extends BaseController {
                 throw new OrderException("not.found", "order not found");
             }
 
+            orderBean.setId(id);
             orderRepository.updateOrder(orderBean);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -190,6 +191,20 @@ public class OrderService extends BaseController {
             }
 
             orderRepository.updatePaymentStatus(id, orderBean.getPayment_status());
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse getBySession(String sessionId) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try{
+            OrderBean order = orderRepository.findBySessionId(sessionId);
+            if (order == null){
+                throw new OrderException("not.found", "order not found");
+            }
+            res.setData(order);
         } catch (Exception e) {
             this.checkException(e, res);
         }

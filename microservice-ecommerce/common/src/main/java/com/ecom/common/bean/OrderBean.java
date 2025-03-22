@@ -12,6 +12,8 @@ public class OrderBean {
     private String stage;
     private String payment_status;
     private Double total_amount;
+    private String stripe_session_id;
+    private String stripe_checkout_url;
     private String created_at;
     private String updated_at;
     private List<OrderProduct> products;

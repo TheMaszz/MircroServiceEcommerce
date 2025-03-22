@@ -91,5 +91,13 @@ public class OrderController {
         return res;
     }
 
+    @GetMapping("/getBySession/{sessionId}")
+    public ApiResponse getBySession(
+            @PathVariable String sessionId
+    ) throws BaseException {
+        ApiResponse res = orderService.getBySession(sessionId);
+        return res;
+    }
+
 
 }
