@@ -4,6 +4,7 @@ import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
 import com.ecom.common.controller.BaseController;
+import com.ecom.common.dto.ProductSearchDTO;
 import com.ecom.common.exception.BaseException;
 import com.ecom.product_service.exception.ProductException;
 import com.ecom.product_service.repository.ProductRepository;
@@ -228,6 +229,18 @@ public class ProductService extends BaseController {
         }
         return res;
     }
+
+    public ApiResponse getAutoComplete(String search) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try{
+            List<ProductSearchDTO> autoComplete = productRepository.findAutoCompleteProduct(search);
+            res.setData(autoComplete);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
 
 
 }

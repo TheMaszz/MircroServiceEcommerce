@@ -82,4 +82,13 @@ public class ProductController {
         return res;
     }
 
+    @GetMapping("/getAutoComplete")
+    public ApiResponse getAutoComplete(
+            HttpServletRequest request,
+            @RequestParam(name = "search", required = false) String search
+    ) throws BaseException {
+        ApiResponse res = productService.getAutoComplete(search);
+        return res;
+    }
+
 }

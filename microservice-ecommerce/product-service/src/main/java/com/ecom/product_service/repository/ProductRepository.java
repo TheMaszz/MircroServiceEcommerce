@@ -2,6 +2,7 @@ package com.ecom.product_service.repository;
 
 import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
+import com.ecom.common.dto.ProductSearchDTO;
 import com.thoughtworks.xstream.core.BaseException;
 import org.apache.ibatis.annotations.*;
 
@@ -136,6 +137,11 @@ public interface ProductRepository {
             "SELECT * FROM product_image WHERE product_id = #{product_id}"
     })
     public List<ProductImageBean> findProductImageByProductId(Long productId) throws BaseException;
+
+    @Select({
+            "SELECT id, name FROM product WHERE name LIKE CONCAT('%', #{search}, '%')"
+    })
+    public List<ProductSearchDTO> findAutoCompleteProduct(String search) throws BaseException;
 
 
 }
