@@ -27,6 +27,7 @@ public class SecurityConfig {
             "/apiendpoint/auth/reset-password",
             "/apiendpoint/auth/resend-token-reset-password",
             "/actuator/**",
+            "/uploads/**"
     };
 
     @Bean
