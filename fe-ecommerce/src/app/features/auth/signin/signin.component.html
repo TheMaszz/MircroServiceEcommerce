@@ -1,0 +1,38 @@
+<form [formGroup]="signinFormGroup" class="flex flex-col h-full min-h-[60vh] w-full">
+    <div class="flex-1">
+        <h1 class="text-center text-2xl mb-4">เข้าสู่ระบบ</h1>
+        <div class="w-full">
+            <mat-form-field class="w-full">
+                <mat-label>ชื่อผู้ใช้งาน หรือ อีเมล</mat-label>
+                <input type="email" matInput formControlName="usernameOrEmail" >
+                <mat-error *ngIf="signinFormGroup.get('usernameOrEmail')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการชื่อผู้ใช้งาน หรือ อีเมล</ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="w-full mt-4">
+            <mat-form-field class="w-full">
+                <mat-label>รหัสผ่าน</mat-label>
+                <input type="password" matInput formControlName="password" >
+                <mat-error *ngIf="signinFormGroup.get('password')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการรหัสผ่าน</ng-container>
+                    <ng-container *ngIf="errors['minlength']">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร</ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <a href="/auth/forgot-password" class="w-full text-sm text-right text-sky-500 underline block">
+            ลืมรหัสผ่าน?
+        </a>
+
+    </div>
+    <div class="w-full mt-6">
+        <button mat-flat-button color="primary" class="w-full mb-2" 
+            [disabled]="signinFormGroup.invalid"
+            (click)="onSubmitHandler()">
+            เข้าสู่ระบบ
+        </button>
+        <a href="/auth/signup" class="text-sm">
+            หากคุณยังไม่มีบัญชี <span class="text-sky-500 underline">คลิก</span>
+        </a>
+    </div>
+</form>

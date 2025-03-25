@@ -1,0 +1,57 @@
+<form [formGroup]="signupFormGroup" class="flex flex-col h-full min-h-[60vh] w-full">
+    <div class="flex-1">
+        <h1 class="text-center text-2xl mb-4">สมัครสมาชิก</h1>
+        <div class="w-full">
+            <mat-form-field class="w-full">
+                <mat-label>อีเมล</mat-label>
+                <input type="email" matInput formControlName="email">
+                <mat-error *ngIf="signupFormGroup.get('email')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการอีเมล</ng-container>
+                    <ng-container *ngIf="errors['email'] && !errors['required']">รูปแบบอีเมลผิด</ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="w-full mt-4">
+            <mat-form-field class="w-full">
+                <mat-label>ผู้ใช้งาน</mat-label>
+                <input type="text" matInput formControlName="username">
+                <mat-error *ngIf="signupFormGroup.get('username')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการชื่อผู้ใช้งาน</ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="w-full mt-4">
+            <mat-form-field class="w-full">
+                <mat-label>รหัสผ่าน</mat-label>
+                <input type="password" matInput formControlName="password">
+                <mat-error *ngIf="signupFormGroup.get('password')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการรหัสผ่าน</ng-container>
+                    <ng-container *ngIf="errors['minlength']">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร</ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="w-full mt-4">
+            <mat-form-field class="w-full">
+                <mat-label>ยืนยันรหัสผ่าน</mat-label>
+                <input type="password" matInput formControlName="cfPassword">
+                <mat-error *ngIf="signupFormGroup.get('cfPassword')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการยืนยันรหัสผ่าน</ng-container>
+                    <ng-container *ngIf="errors['minlength']">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร</ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+    </div>
+    <div class="w-full mt-6">
+        <button mat-flat-button color="primary" class="w-full mb-2" [disabled]="signupFormGroup.invalid"
+            (click)="onSubmitHandler()">
+            สมัครสมาชิก
+        </button>
+        <a href="/auth/signin" class="text-sm">
+            หากคุณมีบัญชีอยู่แล้ว <span class="text-sky-500 underline">คลิก</span>
+        </a>
+    </div>
+</form>

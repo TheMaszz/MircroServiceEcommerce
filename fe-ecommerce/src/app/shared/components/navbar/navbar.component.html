@@ -1,0 +1,55 @@
+<nav class="w-full bg-white shadow-md px-8 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <div class="flex items-center space-x-4">
+        <img src="/assets/logo.png" alt="Logo" class="h-8 w-auto">
+        <span class="text-xl font-bold">ShopMate</span>
+    </div>
+
+    <!-- Center Links -->
+    <div class=" space-x-6 w-[40%]">
+        <mat-form-field class="w-full">
+            <input type="text" matInput [formControl]="searchProduct" [matAutocomplete]="auto"
+                placeholder="ค้นหาสินค้า" (keydown)="onSearchEnter($event)"
+                #trigger="matAutocompleteTrigger">
+            <mat-autocomplete #auto="matAutocomplete"  (optionSelected)="onSearchSelected($event)">
+                @for (option of filteredOptions$ | async; track option) {
+                <mat-option [value]="option.name">{{ option.name }}</mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex items-center space-x-4">
+        <!-- Cart Button -->
+        <ng-container>
+            <button mat-icon-button [matMenuTriggerFor]="myCarts">
+                <mat-icon>shopping_cart</mat-icon>
+            </button>
+            <mat-menu #myCarts="matMenu" xPosition="before">
+                <div class="p-4 min-w-60 flex flex-col">
+                    <p class="mb-2">สินค้าของฉัน</p>
+                    <div class="w-full h-auto max-h-72 overflow-y-auto mb-2">
+                        <div>product</div>
+                    </div>
+                    <button mat-flat-button color="primary" class="w-full">
+                        ดูตะกร้าของฉัน
+                    </button>
+                </div>
+            </mat-menu>
+        </ng-container>
+
+        <!-- Account button -->
+        <ng-container>
+            <button mat-icon-button [matMenuTriggerFor]="accountMenu">
+                <mat-icon>account_circle</mat-icon>
+            </button>
+            <mat-menu #accountMenu="matMenu" xPosition="before">
+                <a mat-menu-item href="">แก้ไขบัญชีของฉัน</a>
+                <a mat-menu-item href="">ดูการสั่งซื้อ</a>
+                <button mat-menu-item>ออกจากระบบ</button>
+            </mat-menu>
+        </ng-container>
+
+    </div>
+</nav>
