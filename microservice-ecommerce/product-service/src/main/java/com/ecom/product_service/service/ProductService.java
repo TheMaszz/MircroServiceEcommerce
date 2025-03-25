@@ -230,10 +230,15 @@ public class ProductService extends BaseController {
         return res;
     }
 
-    public ApiResponse getAutoComplete(String search) throws BaseException {
+    public ApiResponse getAutoComplete(String search, Long limit) throws BaseException {
         ApiResponse res = new ApiResponse();
+        HashMap<String, Object> params = new HashMap<>();
         try{
-            List<ProductSearchDTO> autoComplete = productRepository.findAutoCompleteProduct(search);
+            params.put("search", search);
+            if(limit != null){
+                params.put("limit", limit);
+            }
+            List<ProductSearchDTO> autoComplete = productRepository.findAutoCompleteProduct(params);
             res.setData(autoComplete);
         } catch (Exception e) {
             this.checkException(e, res);

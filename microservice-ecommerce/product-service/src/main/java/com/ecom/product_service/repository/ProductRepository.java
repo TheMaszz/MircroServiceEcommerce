@@ -139,9 +139,12 @@ public interface ProductRepository {
     public List<ProductImageBean> findProductImageByProductId(Long productId) throws BaseException;
 
     @Select({
-            "SELECT id, name FROM product WHERE name LIKE CONCAT('%', #{search}, '%')"
+            "<script>",
+            "SELECT id, name FROM product WHERE name LIKE CONCAT('%', #{search}, '%')",
+            "<if test='limit != null'> limit #{limit} </if>",
+            "</script>"
     })
-    public List<ProductSearchDTO> findAutoCompleteProduct(String search) throws BaseException;
+    public List<ProductSearchDTO> findAutoCompleteProduct(HashMap<String, Object> params) throws BaseException;
 
 
 }
