@@ -16,5 +16,7 @@ public class ProductBean {
     private String updated_at;
     private Long created_by;
     private Long updated_by;
+    private String created_user;
+    private String updated_user;
     private List<ProductImageBean> product_image;
 }
