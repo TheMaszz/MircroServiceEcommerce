@@ -3,6 +3,7 @@ import { environment } from 'environments/environment';
 
 @Pipe({
   name: 'imageUrl',
+  pure: true,
   standalone: true
 })
 export class ImageUrlPipe implements PipeTransform {

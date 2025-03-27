@@ -1,7 +1,7 @@
-<a [href]="'/product/'+id" class="bg-white shadow-md h-80 w-60 border flex flex-col cursor-pointer">
+<a [href]="'/products/'+id" class="bg-white shadow-md h-80 w-60 border flex flex-col cursor-pointer">
     <img class="h-[60%] w-full object-cover" [src]="imgUrl | imageUrl" [alt]="name">
     <div class="h-[40%] p-2 flex flex-col justify-between">
         <p class="">{{ name }}</p>
-        <p>{{ price | currency:'THB':'symbol':'1.0-0' }}</p>
+        <p>{{ price | currency:'THB':'฿':'1.2-2' }}</p>
     </div>
 </a>

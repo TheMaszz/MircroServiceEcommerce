@@ -7,8 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../auth.service';
 import { MaterialModules } from 'app/core/modules/material.module';
+import { AuthService } from 'app/core/services/auth.service';
 
 @Component({
   selector: 'app-signin',

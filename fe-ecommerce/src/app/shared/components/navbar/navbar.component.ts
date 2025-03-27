@@ -1,16 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MaterialModules } from 'app/core/modules/material.module';
-import { HomeService } from 'app/features/home/home.service';
+import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
+import { CartService } from 'app/core/services/cart.service';
+import { ProductService } from 'app/core/services/product.service';
+import { CartGroup, CartItem } from 'app/models/cart.model';
 import {
   debounceTime,
   distinctUntilChanged,
   map,
   Observable,
   startWith,
+  Subject,
   Subscription,
   switchMap,
 } from 'rxjs';
@@ -18,26 +22,29 @@ import {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MaterialModules, ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [MaterialModules, ReactiveFormsModule, CommonModule, RouterModule, ImageUrlPipe],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
-    private homeService: HomeService,
+    private productService: ProductService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cartService: CartService
   ) {}
 
-  private paramsSubscription: Subscription | null = null;
+  private unsubscribe$ = new Subject<void>();
 
   @ViewChild(MatAutocompleteTrigger) autocomplete!: MatAutocompleteTrigger;
 
   searchProduct = new FormControl('');
   filteredOptions$!: Observable<any[]>;
+  cartItemCount = 0;
+  cartItems: CartItem[] = [];
 
   ngOnInit() {
-    this.paramsSubscription = this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.subscribe((params) => {
       this.searchProduct.setValue(params['search'] || '');
     });
 
@@ -47,16 +54,26 @@ export class NavbarComponent {
       distinctUntilChanged(),
       switchMap((value) => this.getAutoCompleteOptions(value || ''))
     );
+
+    this.cartService.cartItems$.subscribe((carts) => {
+      this.cartItemCount = carts.reduce(
+        (sum: number, group: CartGroup) => sum + group.products.length,
+        0
+      );
+      this.cartItems = carts.reduce((acc: CartItem[], group: CartGroup) => {
+        return acc.concat(group.products);
+      }, []);
+    });
+    console.log("cartItems:", this.cartItems);
   }
 
   ngOnDestroy(): void {
-    if (this.paramsSubscription) {
-      this.paramsSubscription.unsubscribe();
-    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   getAutoCompleteOptions(search: string): Observable<any[]> {
-    return this.homeService
+    return this.productService
       .getAutoCompleteProduct({ search: search, limit: 10 })
       .pipe(map((response) => response.data));
   }
@@ -76,5 +93,9 @@ export class NavbarComponent {
       this.searchProduct.setValue(keyword || '');
       this.router.navigateByUrl(`/products?search=${keyword}&page=1`);
     }
+  }
+
+  navigateToCart() {
+    this.router.navigate(['/carts']);
   }
 }

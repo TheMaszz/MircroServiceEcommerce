@@ -2,16 +2,15 @@
     <!-- Logo -->
     <div class="flex items-center space-x-4">
         <img src="/assets/logo.png" alt="Logo" class="h-8 w-auto">
-        <span class="text-xl font-bold">ShopMate</span>
+        <a href="/">ShopMate</a>
     </div>
 
     <!-- Center Links -->
     <div class=" space-x-6 w-[40%]">
         <mat-form-field class="w-full">
-            <input type="text" matInput [formControl]="searchProduct" [matAutocomplete]="auto"
-                placeholder="ค้นหาสินค้า" (keydown)="onSearchEnter($event)"
-                #trigger="matAutocompleteTrigger">
-            <mat-autocomplete #auto="matAutocomplete"  (optionSelected)="onSearchSelected($event)">
+            <input type="text" matInput [formControl]="searchProduct" [matAutocomplete]="auto" placeholder="ค้นหาสินค้า"
+                (keydown)="onSearchEnter($event)" #trigger="matAutocompleteTrigger">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSearchSelected($event)">
                 @for (option of filteredOptions$ | async; track option) {
                 <mat-option [value]="option.name">{{ option.name }}</mat-option>
                 }
@@ -24,15 +23,26 @@
         <!-- Cart Button -->
         <ng-container>
             <button mat-icon-button [matMenuTriggerFor]="myCarts">
-                <mat-icon>shopping_cart</mat-icon>
+                <mat-icon [matBadge]="cartItemCount">shopping_cart</mat-icon>
             </button>
             <mat-menu #myCarts="matMenu" xPosition="before">
                 <div class="p-4 min-w-60 flex flex-col">
                     <p class="mb-2">สินค้าของฉัน</p>
                     <div class="w-full h-auto max-h-72 overflow-y-auto mb-2">
-                        <div>product</div>
+                        <ng-container *ngFor="let product of cartItems">
+                            <a [href]="'/products/'+product.id">
+                                <div class="flex justify-between gap-2 mb-2">
+                                    <div class="flex gap-2">
+                                        <img [src]="product.imageUrl | imageUrl" [alt]="product.name"
+                                            class="w-12 h-12" />
+                                        <span>{{product.name}}</span>
+                                    </div>
+                                    <span>{{product.price | currency:'THB':'฿':'1.2-2' }}</span>
+                                </div>
+                            </a>
+                        </ng-container>
                     </div>
-                    <button mat-flat-button color="primary" class="w-full">
+                    <button mat-flat-button color="primary" class="w-full" (click)="navigateToCart()">
                         ดูตะกร้าของฉัน
                     </button>
                 </div>
