@@ -57,7 +57,7 @@ public class OrderController {
             HttpServletRequest request,
             @RequestBody OrderBean orderBean
     ) throws BaseException {
-        ApiResponse res = orderService.createOrder(orderBean);
+        ApiResponse res = orderService.createOrder(request, orderBean);
         return res;
     }
 

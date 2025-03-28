@@ -100,10 +100,15 @@ public class OrderService extends BaseController {
     }
 
     public ApiResponse createOrder(
+            HttpServletRequest request,
             OrderBean orderBean
     ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+            orderBean.setUser_id(Long.valueOf(userId));
+
             orderRepository.createOrder(orderBean);
 
             if (orderBean.getProducts() != null && !orderBean.getProducts().isEmpty()) {
