@@ -114,4 +114,20 @@ export class CartService {
     }
     this.updateCart(cart);
   }
+
+  removeSelected() {
+    let cart: CartGroup[] = this.getCartFromStorage();
+
+    cart = cart.filter((group) => {
+      if (group.selected) {
+        return false; 
+      }
+
+      group.products = group.products.filter((product) => !product.selected);
+
+      return group.products.length > 0;
+    });
+
+    this.updateCart(cart);
+  }
 }

@@ -143,6 +143,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   checkoutHandler() {
     console.log('selectedItems: ', this.selectedItems);
+    localStorage.setItem('checkoutItems', JSON.stringify(this.selectedItems));
     this.router.navigate(['/checkout']);
   }
 }

@@ -9,7 +9,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { MaterialModules } from 'app/core/modules/material.module';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 import { CartService } from 'app/core/services/cart.service';
 import { Subject } from 'rxjs';
@@ -27,7 +27,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private cartService: CartService,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {}
 
   private unsubscribe$ = new Subject<void>();
@@ -83,10 +84,10 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   quantityHandler(condition: 'plus' | 'minus') {
-    if(condition==='plus' && this.product.qty > this.quantity){
+    if (condition === 'plus' && this.product.qty > this.quantity) {
       this.quantity++;
     }
-    if(condition==='minus' && this.quantity > 1){
+    if (condition === 'minus' && this.quantity > 1) {
       this.quantity--;
     }
   }
@@ -101,12 +102,28 @@ export class ProductComponent implements OnInit, OnDestroy {
       imageUrl: this.product.product_image[0].image_url,
       created_by: this.product.created_by,
       created_user: this.product.created_user,
-      selected: false
-    }
+      selected: false,
+    };
     this.cartService.addToCart(newProduct);
   }
 
-  backNavigate(){
+  buyProduct() {
+    const newProduct: CartItem = {
+      id: this.product.id,
+      name: this.product.name,
+      price: this.product.price,
+      qtyInStock: this.product.qty,
+      qty: this.quantity,
+      imageUrl: this.product.product_image[0].image_url,
+      created_by: this.product.created_by,
+      created_user: this.product.created_user,
+      selected: false,
+    };
+    this.cartService.addToCart(newProduct);
+    this.router.navigate(['/carts']);
+  }
+
+  backNavigate() {
     this.location.back();
   }
 }

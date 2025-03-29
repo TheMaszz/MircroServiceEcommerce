@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>ชำระเงิน</h2>
+<mat-dialog-content>
+    ต้องการชำระเงินเลยหรือไม่?
+</mat-dialog-content>
+<mat-dialog-actions>
+   <div class="w-full flex items-center justify-end">
+    <button mat-stroked-button (click)="payLater()">ชำระภายหลัง</button>
+    <button mat-flat-button cdkFocusInitial color="primary" (click)="payNow()">ชำระเลย</button>
+   </div>
+</mat-dialog-actions>

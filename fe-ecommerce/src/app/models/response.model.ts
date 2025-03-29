@@ -5,7 +5,7 @@ class Paginate {
 }
 
 export class ResponseModel<T = any> {
-  data!: Array<T>;
+  data!: T | T[];
   response_code!: string;
   response_datetime!: Date;
   response_desc!: string;

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { OrderRequest, OrderResponse } from 'app/models/order.model';
+import { OrderRequest } from 'app/models/order.model';
 import { ResponseModel } from 'app/models/response.model';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
@@ -13,9 +13,9 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  create(data: OrderRequest): Observable<OrderResponse> {
-    return this.http.post<OrderResponse>(
-      `/${environment.apiUrl}/${this.serviceUrl}/create`,
+  create(data: OrderRequest): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/create`,
       data
     );
   }

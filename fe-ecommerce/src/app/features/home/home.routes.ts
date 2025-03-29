@@ -7,6 +7,8 @@ import { CartComponent } from './cart/cart.component';
 import { OrdersComponent } from './orders/orders.component';
 import { OrderComponent } from './order/order.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
+import { CheckoutCancelComponent } from './checkout-cancel/checkout-cancel.component';
 
 export const HOME_ROUTES: Routes = [
   {
@@ -30,7 +32,16 @@ export const HOME_ROUTES: Routes = [
       {
         path: 'checkout',
         component: CheckoutComponent
+      },
+      {
+        path: 'checkout/success',
+        component: CheckoutSuccessComponent
+      },
+      {
+        path: 'checkout/cancel',
+        component: CheckoutCancelComponent
       }
+      
     ],
   },
 ];
