@@ -22,7 +22,7 @@ import java.util.List;
 public class PaymentService {
 
     // YOUR_STRIPE_ENDPOINT_SECRET
-    private final String STRIPE_ENDPOINT_SECRET = "whsec_1edf416f22f2d6d5ac435fb511b422049b0077f8b059176367cd1a1764d64cf7";
+    private final String STRIPE_ENDPOINT_SECRET = "YOUR_STRIPE_ENDPOINT_SECRET";
     private final OrderClient orderClient;
     @Value("${stripe.secretKey}")
     private String STRIPE_SECRET_KEY;
