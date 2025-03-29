@@ -28,13 +28,19 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).body(stripeResponse);
     }
 
-    @GetMapping("/webhook")
+    @PostMapping("/webhook")
     public ResponseEntity<String> handleStripeEvent(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader
     ) {
         String res = paymentService.handleStripeEvent(payload, sigHeader);
         return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @PostMapping("/expire/{sessionId}")
+    public ResponseEntity<String> expireSession(@PathVariable String sessionId) {
+      String res = paymentService.expireBySessionId(sessionId);
+      return  ResponseEntity.ok(res);
     }
 
 

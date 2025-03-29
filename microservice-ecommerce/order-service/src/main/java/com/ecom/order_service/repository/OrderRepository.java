@@ -225,7 +225,7 @@ public interface OrderRepository {
     public void updatePaymentStatus(@Param("id") Long id, @Param("payment_status") String payment_status) throws BaseException;
 
     @Select({
-            "SELECT * FROM order_master WHERE session_id = #{sessionId}"
+            "SELECT * FROM order_master WHERE stripe_session_id = #{sessionId}"
     })
     public OrderBean findBySessionId(String sessionId) throws BaseException;
 

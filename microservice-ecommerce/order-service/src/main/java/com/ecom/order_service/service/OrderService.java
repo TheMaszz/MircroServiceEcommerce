@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -115,6 +116,8 @@ public class OrderService extends BaseController {
                 orderBean.getProducts().forEach(product -> product.setOrder_id(orderBean.getId()));
                 orderRepository.createOrderProduct(orderBean.getProducts());
             }
+
+            res.setData(Collections.singletonMap("orderId", orderBean.getId()));
 
         } catch (Exception e) {
             this.checkException(e, res);

@@ -19,7 +19,7 @@ public class OrderBean {
     private List<OrderProduct> products;
 
     @Data
-    static public class OrderProduct{
+    static public class OrderProduct {
         private Long id;
         private Long order_id;
         private Long product_id;

@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/apiendpoint/auth/send-token-reset-password",
             "/apiendpoint/auth/reset-password",
             "/apiendpoint/auth/resend-token-reset-password",
+            "/apiendpoint/payment/webhook",
             "/actuator/**",
             "/uploads/**"
     };

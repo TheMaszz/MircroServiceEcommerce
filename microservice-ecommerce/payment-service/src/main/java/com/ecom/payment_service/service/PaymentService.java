@@ -5,6 +5,7 @@ import com.ecom.common.bean.OrderBean;
 import com.ecom.common.dto.ProductRequest;
 import com.ecom.common.dto.StripeResponse;
 import com.ecom.payment_service.client.OrderClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -20,13 +21,11 @@ import java.util.List;
 @Service
 public class PaymentService {
 
+    // YOUR_STRIPE_ENDPOINT_SECRET
+    private final String STRIPE_ENDPOINT_SECRET = "whsec_1edf416f22f2d6d5ac435fb511b422049b0077f8b059176367cd1a1764d64cf7";
+    private final OrderClient orderClient;
     @Value("${stripe.secretKey}")
     private String STRIPE_SECRET_KEY;
-
-    // YOUR_STRIPE_ENDPOINT_SECRET
-    private final String STRIPE_ENDPOINT_SECRET = "YOUR_STRIPE_ENDPOINT_SECRET";
-
-    private final OrderClient orderClient;
 
     public PaymentService(OrderClient orderClient) {
         this.orderClient = orderClient;
@@ -58,8 +57,8 @@ public class PaymentService {
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:8084/success")
-                .setCancelUrl("http://localhost:8084/cancel")
+                .setSuccessUrl("http://localhost:4200/checkout/success")
+                .setCancelUrl("http://localhost:4200/checkout/cancel")
                 .addAllLineItem(lineItems)
                 .build();
 
@@ -120,7 +119,8 @@ public class PaymentService {
         String sessionId = session.getId();
 
         ApiResponse orderRes = orderClient.getBySession(sessionId);
-        OrderBean order = (OrderBean) orderRes.getData();
+        ObjectMapper objectMapper = new ObjectMapper();
+        OrderBean order = objectMapper.convertValue(orderRes.getData(), OrderBean.class);
 
         OrderBean orderBean = new OrderBean();
         orderBean.setStage("Preparing");
@@ -139,7 +139,8 @@ public class PaymentService {
         String sessionId = session.getId();
 
         ApiResponse orderRes = orderClient.getBySession(sessionId);
-        OrderBean order = (OrderBean) orderRes.getData();
+        ObjectMapper objectMapper = new ObjectMapper();
+        OrderBean order = objectMapper.convertValue(orderRes.getData(), OrderBean.class);
 
         OrderBean orderBean = new OrderBean();
         orderBean.setStage("Cancelled");
@@ -149,5 +150,21 @@ public class PaymentService {
 
         orderClient.updateOrder(order.getId(), orderBean);
     }
+
+    public String expireBySessionId(String sessionId) {
+        Stripe.apiKey = STRIPE_SECRET_KEY;
+        try {
+            // Retrieve session
+            Session session = Session.retrieve(sessionId);
+
+            // Properly expire the session using the expire() method
+            Session expiredSession = session.expire();
+
+            return "Session expired: " + expiredSession.getId();
+        } catch (StripeException e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
 
 }
