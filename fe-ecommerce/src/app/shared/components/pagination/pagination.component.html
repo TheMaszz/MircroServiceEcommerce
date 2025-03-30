@@ -1,7 +1,7 @@
-<div class="flex justify-center items-center space-x-2 mt-4">
+<div class="flex justify-center items-center space-x-2 mt-12">
     <button class="px-3 py-1 rounded transition duration-200" [ngClass]="{
       'bg-gray-200 text-gray-400 cursor-not-allowed': currentPage === 1,
-      'bg-blue-500 text-white hover:bg-blue-600 shadow-md': currentPage !== 1
+      'bg-primary-500 text-white hover:bg-primary-600 shadow-md': currentPage !== 1
     }" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
         ย้อนกลับ
     </button>
@@ -10,7 +10,7 @@
     <ng-container *ngFor="let page of visiblePages">
         <ng-container *ngIf="page !== '...'; else dots">
             <button class="px-3 py-1 rounded transition-colors duration-200" [ngClass]="{
-            'bg-blue-500 text-white': page === currentPage,
+            'bg-primary-500 text-white': page === currentPage,
             'bg-gray-200 hover:bg-gray-300': page !== currentPage
           }" (click)="changePage(page)">
                 {{ page }}
@@ -23,7 +23,7 @@
 
     <button class="px-3 py-1 rounded transition duration-200" [ngClass]="{
       'bg-gray-200 text-gray-400 cursor-not-allowed': currentPage === totalPages,
-      'bg-blue-500 text-white hover:bg-blue-600 shadow-md': currentPage !== totalPages
+      'bg-primary-500 text-white hover:bg-primary-600 shadow-md': currentPage !== totalPages
     }" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
         ถัดไป
     </button>
