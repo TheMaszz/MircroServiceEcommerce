@@ -22,7 +22,13 @@ import {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MaterialModules, ReactiveFormsModule, CommonModule, RouterModule, ImageUrlPipe],
+  imports: [
+    MaterialModules,
+    ReactiveFormsModule,
+    CommonModule,
+    RouterModule,
+    ImageUrlPipe,
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
@@ -64,7 +70,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         return acc.concat(group.products);
       }, []);
     });
-    console.log("cartItems:", this.cartItems);
+    console.log('cartItems:', this.cartItems);
   }
 
   ngOnDestroy(): void {
@@ -97,5 +103,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   navigateToCart() {
     this.router.navigate(['/carts']);
+  }
+
+  logout() {
+    sessionStorage.removeItem('jwt');
+    this.router.navigate(['/auth/signin']);
   }
 }

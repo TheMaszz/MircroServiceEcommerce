@@ -56,8 +56,8 @@
             </button>
             <mat-menu #accountMenu="matMenu" xPosition="before">
                 <a mat-menu-item href="">แก้ไขบัญชีของฉัน</a>
-                <a mat-menu-item href="">ดูการสั่งซื้อ</a>
-                <button mat-menu-item>ออกจากระบบ</button>
+                <a mat-menu-item href="/orders">ดูการสั่งซื้อ</a>
+                <button mat-menu-item (click)="logout()">ออกจากระบบ</button>
             </mat-menu>
         </ng-container>
 
