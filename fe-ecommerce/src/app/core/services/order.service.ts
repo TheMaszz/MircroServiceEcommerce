@@ -13,7 +13,7 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  create(data: OrderRequest): Observable<ResponseModel> {
+  create(data: OrderRequest[]): Observable<ResponseModel> {
     return this.http.post<ResponseModel>(
       `${environment.apiUrl}/${this.serviceUrl}/create`,
       data
