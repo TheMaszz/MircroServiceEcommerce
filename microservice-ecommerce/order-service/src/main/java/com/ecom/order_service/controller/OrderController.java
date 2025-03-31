@@ -2,13 +2,17 @@ package com.ecom.order_service.controller;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
+import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.bean.UserBean;
+import com.ecom.common.dto.OrderRequest;
 import com.ecom.common.exception.BaseException;
 import com.ecom.order_service.service.OrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/apiendpoint/order")
@@ -58,9 +62,9 @@ public class OrderController {
     @PostMapping("/create")
     public ApiResponse create(
             HttpServletRequest request,
-            @RequestBody OrderBean orderBean
+            @RequestBody List<OrderRequest> orderRequestList
     ) throws BaseException {
-        ApiResponse res = orderService.createOrder(request, orderBean);
+        ApiResponse res = orderService.createOrder(request, orderRequestList);
         return res;
     }
 
@@ -88,9 +92,9 @@ public class OrderController {
     public ApiResponse updatePaymentStatus(
             HttpServletRequest request,
             @PathVariable Long id,
-            @RequestBody OrderBean orderBean
+            @RequestBody PaymentStatusBean paymentStatusBean
     ) throws BaseException {
-        ApiResponse res = orderService.updatePaymentStatus(id, orderBean);
+        ApiResponse res = orderService.updatePaymentStatus(id, paymentStatusBean);
         return res;
     }
 

@@ -2,6 +2,8 @@ package com.ecom.payment_service.service;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
+import com.ecom.common.bean.OrderPaymentDTO;
+import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.dto.ProductRequest;
 import com.ecom.common.dto.StripeResponse;
 import com.ecom.payment_service.client.OrderClient;
@@ -22,7 +24,7 @@ import java.util.List;
 public class PaymentService {
 
     // YOUR_STRIPE_ENDPOINT_SECRET
-    private final String STRIPE_ENDPOINT_SECRET = "YOUR_STRIPE_ENDPOINT_SECRET";
+    private final String STRIPE_ENDPOINT_SECRET = "whsec_1edf416f22f2d6d5ac435fb511b422049b0077f8b059176367cd1a1764d64cf7";
     private final OrderClient orderClient;
     @Value("${stripe.secretKey}")
     private String STRIPE_SECRET_KEY;
@@ -31,7 +33,7 @@ public class PaymentService {
         this.orderClient = orderClient;
     }
 
-    public StripeResponse checkoutProducts(List<ProductRequest> productRequests, Long orderId) {
+    public StripeResponse checkoutProducts(List<ProductRequest> productRequests, List<OrderPaymentDTO> ids) {
         Stripe.apiKey = STRIPE_SECRET_KEY;
 
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
@@ -70,11 +72,19 @@ public class PaymentService {
             System.out.println(e.getMessage());
         }
 
-        OrderBean orderBean = new OrderBean();
-        orderBean.setStage("Payment");
-        orderBean.setStripe_session_id(session.getId());
-        orderBean.setStripe_checkout_url(session.getUrl());
-        orderClient.updateOrder(orderId, orderBean);
+        Session finalSession = session;
+        ids.forEach(id -> {
+            PaymentStatusBean paymentStatusBean = new PaymentStatusBean();
+            OrderBean orderBean = new OrderBean();
+            orderBean.setStage("Payment");
+            paymentStatusBean.setStatus("Unpaid");
+            paymentStatusBean.setStripe_session_id(finalSession.getId());
+            paymentStatusBean.setStripe_checkout_url(finalSession.getUrl());
+
+            orderClient.updateStage(id.getOrderId(), orderBean);
+            orderClient.updatePaymentStatus(id.getPaymentStatusId(), paymentStatusBean);
+        });
+
 
         return StripeResponse.builder()
                 .status("SUCCESS")
@@ -120,15 +130,23 @@ public class PaymentService {
 
         ApiResponse orderRes = orderClient.getBySession(sessionId);
         ObjectMapper objectMapper = new ObjectMapper();
-        OrderBean order = objectMapper.convertValue(orderRes.getData(), OrderBean.class);
+        List<OrderBean> orders = objectMapper.convertValue(
+                orderRes.getData(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OrderBean.class)
+        );
 
-        OrderBean orderBean = new OrderBean();
-        orderBean.setStage("Preparing");
-        orderBean.setPayment_status("Paid");
-        orderBean.setStripe_checkout_url(null);
-        orderBean.setStripe_session_id(null);
+        orders.forEach(order -> {
+            OrderBean orderBean = new OrderBean();
+            PaymentStatusBean paymentStatusBean = new PaymentStatusBean();
+            orderBean.setStage("Preparing");
+            paymentStatusBean.setStatus("Paid");
+            paymentStatusBean.setStripe_checkout_url(null);
+            paymentStatusBean.setStripe_session_id(null);
 
-        orderClient.updateOrder(order.getId(), orderBean);
+            orderClient.updateStage(order.getId(), orderBean);
+            orderClient.updatePaymentStatus(order.getPayment_status_id(), paymentStatusBean);
+        });
+
     }
 
     private void handleExpired(Event event) {
@@ -140,15 +158,22 @@ public class PaymentService {
 
         ApiResponse orderRes = orderClient.getBySession(sessionId);
         ObjectMapper objectMapper = new ObjectMapper();
-        OrderBean order = objectMapper.convertValue(orderRes.getData(), OrderBean.class);
+        List<OrderBean> orders = objectMapper.convertValue(
+                orderRes.getData(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OrderBean.class)
+        );
 
-        OrderBean orderBean = new OrderBean();
-        orderBean.setStage("Cancelled");
-        orderBean.setPayment_status("Failed");
-        orderBean.setStripe_checkout_url(null);
-        orderBean.setStripe_session_id(null);
+        orders.forEach(order -> {
+            OrderBean orderBean = new OrderBean();
+            PaymentStatusBean paymentStatusBean = new PaymentStatusBean();
+            orderBean.setStage("Cancelled");
+            paymentStatusBean.setStatus("Failed");
+            paymentStatusBean.setStripe_checkout_url(null);
+            paymentStatusBean.setStripe_session_id(null);
 
-        orderClient.updateOrder(order.getId(), orderBean);
+            orderClient.updateStage(order.getId(), orderBean);
+            orderClient.updatePaymentStatus(order.getPayment_status_id(), paymentStatusBean);
+        });
     }
 
     public String expireBySessionId(String sessionId) {

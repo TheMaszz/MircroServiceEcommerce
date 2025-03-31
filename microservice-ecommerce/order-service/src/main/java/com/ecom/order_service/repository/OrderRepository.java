@@ -1,6 +1,7 @@
 package com.ecom.order_service.repository;
 
 import com.ecom.common.bean.OrderBean;
+import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
 import com.ecom.common.exception.BaseException;
@@ -177,13 +178,22 @@ public interface OrderRepository {
     public OrderBean findById(Long id) throws BaseException;
 
     @Insert({
-            "INSERT INTO order_master",
-            "(user_id, address_id, stage, payment_status, total_amount, created_at)",
+            "<script>",
+            "INSERT INTO order_master (user_id, address_id, stage, total_amount, created_at)",
             "VALUES",
-            "(#{user_id}, #{address_id}, #{stage}, #{payment_status}, #{total_amount}, now())"
+            "<foreach collection='orderBeanList' item='order' separator=','>",
+            "(#{order.user_id}, #{order.address_id}, #{order.stage}, #{order.total_amount}, now())",
+            "</foreach>",
+            "</script>"
     })
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    public void createOrder(OrderBean orderBean) throws BaseException;
+    void createOrder(@Param("orderBeanList") List<OrderBean> orderBeanList) throws BaseException;
+
+    @Insert({
+            "INSERT INTO payment_status (status, order_id) VALUES ('Unpaid', #{order_id})"
+    })
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    void createPaymentStatus(PaymentStatusBean paymentStatusBean);
 
     @Insert({
             "<script>",
@@ -195,14 +205,11 @@ public interface OrderRepository {
             "</foreach>",
             "</script>"
     })
-    public void createOrderProduct(List<OrderBean.OrderProduct> orderProduct) throws BaseException;
+    public void createOrderProduct(List<OrderBean.OrderProduct> orderProduct);
 
     @Update({
             "UPDATE order_master SET",
             "stage = #{stage},",
-            "payment_status = #{payment_status},",
-            "stripe_session_id = #{stripe_session_id},",
-            "stripe_checkout_url = #{stripe_checkout_url},",
             "updated_at = now()",
             "WHERE id = #{id}"
     })
@@ -217,16 +224,25 @@ public interface OrderRepository {
     public void updateStage(@Param("id") Long id, @Param("stage") String stage) throws BaseException;
 
     @Update({
-            "UPDATE order_master SET",
-            "payment_status = #{payment_status},",
-            "updated_at = now()",
+            "UPDATE payment_status SET",
+            "status = #{status},",
+            "stripe_session_id = #{stripe_session_id},",
+            "stripe_checkout_url = #{stripe_checkout_url}",
             "WHERE id = #{id}"
     })
-    public void updatePaymentStatus(@Param("id") Long id, @Param("payment_status") String payment_status) throws BaseException;
+    public void updatePaymentStatus(PaymentStatusBean paymentStatusBean) throws BaseException;
 
     @Select({
-            "SELECT * FROM order_master WHERE stripe_session_id = #{sessionId}"
+            "SELECT om.id, ps.id AS payment_status_id ",
+            "FROM payment_status AS ps",
+            "JOIN order_master AS om ON ps.order_id = om.id",
+            "WHERE ps.stripe_session_id = #{sessionId}"
     })
-    public OrderBean findBySessionId(String sessionId) throws BaseException;
+    public List<OrderBean> findBySessionId(String sessionId) throws BaseException;
+
+    @Select({
+            "SELECT * FROM payment_status WHERE id = #{id}"
+    })
+    public PaymentStatusBean findPaymentStatusById(Long id) throws BaseException;
 
 }

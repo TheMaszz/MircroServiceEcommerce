@@ -1,13 +1,11 @@
 package com.ecom.payment_service.controller;
 
-import com.ecom.common.dto.ProductRequest;
+import com.ecom.common.bean.CheckOutDTO;
 import com.ecom.common.dto.StripeResponse;
 import com.ecom.payment_service.service.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/apiendpoint/payment")
@@ -19,12 +17,11 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping("/checkout/{orderId}")
+    @PostMapping("/checkout")
     public ResponseEntity<StripeResponse> checkout(
-            @RequestBody List<ProductRequest> productRequest,
-            @PathVariable Long orderId
+            @RequestBody CheckOutDTO checkOutDTO
     ) {
-        StripeResponse stripeResponse = paymentService.checkoutProducts(productRequest, orderId);
+        StripeResponse stripeResponse = paymentService.checkoutProducts(checkOutDTO.getProductRequests(), checkOutDTO.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(stripeResponse);
     }
 
@@ -39,8 +36,8 @@ public class PaymentController {
 
     @PostMapping("/expire/{sessionId}")
     public ResponseEntity<String> expireSession(@PathVariable String sessionId) {
-      String res = paymentService.expireBySessionId(sessionId);
-      return  ResponseEntity.ok(res);
+        String res = paymentService.expireBySessionId(sessionId);
+        return ResponseEntity.ok(res);
     }
 
 

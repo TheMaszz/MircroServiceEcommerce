@@ -2,17 +2,18 @@ package com.ecom.order_service.service;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
+import com.ecom.common.bean.OrderPaymentDTO;
+import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.controller.BaseController;
+import com.ecom.common.dto.OrderRequest;
 import com.ecom.common.exception.BaseException;
 import com.ecom.order_service.exception.OrderException;
 import com.ecom.order_service.repository.OrderRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService extends BaseController {
@@ -102,23 +103,57 @@ public class OrderService extends BaseController {
 
     public ApiResponse createOrder(
             HttpServletRequest request,
-            OrderBean orderBean
+            List<OrderRequest> orderRequestList
     ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
             String userId = request.getHeader("X-User-Id");
             String role = request.getHeader("X-Role");
-            orderBean.setUser_id(Long.valueOf(userId));
 
-            orderRepository.createOrder(orderBean);
+            List<OrderBean> orderBeanList = new ArrayList<>();
 
-            if (orderBean.getProducts() != null && !orderBean.getProducts().isEmpty()) {
-                orderBean.getProducts().forEach(product -> product.setOrder_id(orderBean.getId()));
-                orderRepository.createOrderProduct(orderBean.getProducts());
+            orderRequestList.forEach(orderRequest -> {
+                OrderBean orderBean = new OrderBean();
+                orderBean.setUser_id(Long.valueOf(userId));
+                orderBean.setAddress_id(orderRequest.getAddress_id());
+                orderBean.setTotal_amount(orderRequest.getTotal_amount());
+                orderBean.setStage(orderRequest.getStage());
+                orderBeanList.add(orderBean);
+            });
+
+
+            orderRepository.createOrder(orderBeanList);
+
+            for (int index = 0; index < orderRequestList.size(); index++) {
+                OrderRequest orderRequest = orderRequestList.get(index);
+                OrderBean orderBean = orderBeanList.get(index);
+
+                if (orderRequest.getProducts() != null && !orderRequest.getProducts().isEmpty()) {
+                    List<OrderBean.OrderProduct> orderProducts = new ArrayList<>();
+
+                    orderRequest.getProducts().forEach(product -> {
+                        OrderBean.OrderProduct orderProduct = new OrderBean.OrderProduct();
+                        orderProduct.setOrder_id(orderBean.getId());
+                        orderProduct.setProduct_id(product.getProduct_id());
+                        orderProducts.add(orderProduct);
+                    });
+
+                    orderRepository.createOrderProduct(orderProducts);
+                }
+
+
+                PaymentStatusBean paymentStatusBean = new PaymentStatusBean();
+                paymentStatusBean.setOrder_id(orderBean.getId());
+                orderRepository.createPaymentStatus(paymentStatusBean);
+
+                orderBean.setPayment_status_id(paymentStatusBean.getId());
             }
 
-            res.setData(Collections.singletonMap("orderId", orderBean.getId()));
+            List<OrderPaymentDTO> ids = orderBeanList.stream()
+                    .map(order -> new OrderPaymentDTO(order.getId(), order.getPayment_status_id()))
+                    .collect(Collectors.toList());
 
+            res.setData(ids);
         } catch (Exception e) {
             this.checkException(e, res);
         }
@@ -178,13 +213,13 @@ public class OrderService extends BaseController {
 
     public ApiResponse updatePaymentStatus(
             Long id,
-            OrderBean orderBean
+            PaymentStatusBean paymentStatusBean
     ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
-            OrderBean order = orderRepository.findById(id);
-            if (order == null) {
-                throw new OrderException("not.found", "order not found");
+            PaymentStatusBean paymentStatus = orderRepository.findPaymentStatusById(id);
+            if (paymentStatus == null) {
+                throw new OrderException("paymentStatus.not.found", "order paymentStatus not found");
             }
 
             List<String> validPaymentStatus = Arrays.asList(
@@ -194,11 +229,12 @@ public class OrderService extends BaseController {
                     "Refunded"
             );
 
-            if (!validPaymentStatus.contains(orderBean.getPayment_status())) {
-                throw new OrderException("invalid.payment_status", "Invalid payment_status: " + orderBean.getPayment_status());
+            if (!validPaymentStatus.contains(paymentStatusBean.getStatus())) {
+                throw new OrderException("invalid.payment_status", "Invalid payment_status: " + paymentStatusBean.getStatus());
             }
 
-            orderRepository.updatePaymentStatus(id, orderBean.getPayment_status());
+            paymentStatusBean.setId(id);
+            orderRepository.updatePaymentStatus(paymentStatusBean);
         } catch (Exception e) {
             this.checkException(e, res);
         }
@@ -207,12 +243,12 @@ public class OrderService extends BaseController {
 
     public ApiResponse getBySession(String sessionId) throws BaseException {
         ApiResponse res = new ApiResponse();
-        try{
-            OrderBean order = orderRepository.findBySessionId(sessionId);
-            if (order == null){
+        try {
+            List<OrderBean> orders = orderRepository.findBySessionId(sessionId);
+            if (orders == null || orders.isEmpty()) {
                 throw new OrderException("not.found", "order not found");
             }
-            res.setData(order);
+            res.setData(orders);
         } catch (Exception e) {
             this.checkException(e, res);
         }
