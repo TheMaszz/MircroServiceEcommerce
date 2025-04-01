@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { MaterialModules } from 'app/core/modules/material.module';
 
 @Component({
   selector: 'app-alert-loading',
   standalone: true,
-  imports: [],
+  imports: [MaterialModules],
   templateUrl: './alert-loading.component.html',
-  styleUrl: './alert-loading.component.scss'
 })
 export class AlertLoadingComponent {
 

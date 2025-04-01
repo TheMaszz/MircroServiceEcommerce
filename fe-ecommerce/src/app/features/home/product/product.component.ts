@@ -41,10 +41,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   product!: ProductModel;
 
   ngOnInit(): void {
-    window.alertLoading();
     this.activatedRoute.data.subscribe(({ product }) => {
       this.product = product.data;
-      window.closeLoading();
     });
     console.log('product: ', this.product);
   }

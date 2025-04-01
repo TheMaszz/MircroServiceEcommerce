@@ -29,6 +29,7 @@ export class CartComponent implements OnInit, OnDestroy {
     window.alertLoading();
     this.cartService.cartItems$.subscribe((carts) => {
       this.carts = carts;
+      window.closeLoading();
     });
     this.calculateTotals();
   }

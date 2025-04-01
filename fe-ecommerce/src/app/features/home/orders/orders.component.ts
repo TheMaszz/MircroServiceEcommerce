@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-orders',
@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
 })
-export class OrdersComponent {
+export class OrdersComponent implements OnInit {
   constructor() {}
 
   currentIndexStage: number = 0;
@@ -43,6 +43,14 @@ export class OrdersComponent {
       value: 'Cancelled',
     },
   ];
+
+  ngOnInit(): void {
+    // window.alertLoading();
+
+    // window.closeLoading();
+
+
+  }
 
   changeStage(i: number) {
     this.currentIndexStage = i;

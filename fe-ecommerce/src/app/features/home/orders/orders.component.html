@@ -1,7 +1,7 @@
 <div class="mt-4">
     <div class="grid grid-cols-7 bg-white rounded-md mb-2 border">
         <ng-container *ngFor="let stage of stages; let i = index">
-            <div class="py-4 col-span-1 text-center border-b-2"
+            <div class="py-4 col-span-1 text-center border-b-2 cursor-pointer"
                 [ngClass]="i === currentIndexStage ? 'border-b-primary-500' : ''"
                 (click)="changeStage(i)">
                 <span>{{ stage.text }}</span>
