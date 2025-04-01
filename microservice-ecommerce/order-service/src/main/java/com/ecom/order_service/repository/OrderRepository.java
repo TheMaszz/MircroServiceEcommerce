@@ -179,10 +179,10 @@ public interface OrderRepository {
 
     @Insert({
             "<script>",
-            "INSERT INTO order_master (user_id, address_id, stage, total_amount, created_at)",
+            "INSERT INTO order_master (user_id, address_id, shop_id, stage, total_amount, created_at)",
             "VALUES",
             "<foreach collection='orderBeanList' item='order' separator=','>",
-            "(#{order.user_id}, #{order.address_id}, #{order.stage}, #{order.total_amount}, now())",
+            "(#{order.user_id}, #{order.address_id}, #{order.shop_id}, #{order.stage}, #{order.total_amount}, now())",
             "</foreach>",
             "</script>"
     })

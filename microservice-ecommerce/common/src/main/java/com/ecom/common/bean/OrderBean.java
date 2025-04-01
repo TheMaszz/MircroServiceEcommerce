@@ -9,6 +9,7 @@ public class OrderBean {
     private Long id;
     private Long user_id;
     private Long address_id;
+    private Long shop_id;
     private String stage;
     private Double total_amount;
     private String created_at;

@@ -116,6 +116,7 @@ public class OrderService extends BaseController {
                 OrderBean orderBean = new OrderBean();
                 orderBean.setUser_id(Long.valueOf(userId));
                 orderBean.setAddress_id(orderRequest.getAddress_id());
+                orderBean.setShop_id(orderRequest.getCreated_by());
                 orderBean.setTotal_amount(orderRequest.getTotal_amount());
                 orderBean.setStage(orderRequest.getStage());
                 orderBeanList.add(orderBean);
