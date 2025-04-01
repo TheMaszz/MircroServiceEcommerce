@@ -92,4 +92,14 @@ public class ProductController {
         return res;
     }
 
+    @PutMapping("/updateQty/{id}")
+    public ApiResponse updateQty(
+            HttpServletRequest request,
+            @PathVariable Long id,
+            @RequestBody Long qty
+    ) throws BaseException {
+        ApiResponse res = productService.updateQty(id, qty);
+        return res;
+    }
+
 }

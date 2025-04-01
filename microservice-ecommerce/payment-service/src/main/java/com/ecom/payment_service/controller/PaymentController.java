@@ -1,6 +1,6 @@
 package com.ecom.payment_service.controller;
 
-import com.ecom.common.bean.CheckOutDTO;
+import com.ecom.common.dto.CheckOutDTO;
 import com.ecom.common.dto.StripeResponse;
 import com.ecom.payment_service.service.PaymentService;
 import org.springframework.http.HttpStatus;

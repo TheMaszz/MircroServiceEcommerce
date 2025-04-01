@@ -1,6 +1,5 @@
 package com.ecom.common.dto;
 
-import com.ecom.common.bean.OrderPaymentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

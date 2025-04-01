@@ -246,6 +246,22 @@ public class ProductService extends BaseController {
         return res;
     }
 
+    public ApiResponse updateQty(Long id, Long qty) throws BaseException{
+        ApiResponse res = new ApiResponse();
+        try{
+            ProductBean product = productRepository.findProductById(id);
+            if (product == null) {
+                throw new ProductException("not.found", "product not found");
+            }
+
+            Long currentQty = product.getQty() - qty;
+            productRepository.updateQty(id, currentQty);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
 
 
 }

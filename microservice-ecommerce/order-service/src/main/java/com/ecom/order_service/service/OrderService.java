@@ -2,7 +2,7 @@ package com.ecom.order_service.service;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
-import com.ecom.common.bean.OrderPaymentDTO;
+import com.ecom.common.dto.OrderPaymentDTO;
 import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.controller.BaseController;
 import com.ecom.common.dto.OrderRequest;
@@ -30,7 +30,8 @@ public class OrderService extends BaseController {
             int page_number,
             int page_size,
             String sort,
-            String sort_type
+            String sort_type,
+            String stage
     ) throws BaseException {
         ApiResponse res = new ApiResponse();
         HashMap<String, Object> params = new HashMap<>();
@@ -39,6 +40,9 @@ public class OrderService extends BaseController {
             params.put("user_id", userId);
             if (search != null && !search.isEmpty()) {
                 params.put("search", search);
+            }
+            if(stage != null && !stage.isEmpty()){
+                params.put("stage", stage);
             }
             this.pagination(page_number, page_size, sort, sort_type, params);
             params.put("isCount", false);
@@ -136,6 +140,7 @@ public class OrderService extends BaseController {
                         OrderBean.OrderProduct orderProduct = new OrderBean.OrderProduct();
                         orderProduct.setOrder_id(orderBean.getId());
                         orderProduct.setProduct_id(product.getProduct_id());
+                        orderProduct.setQty(product.getQty());
                         orderProducts.add(orderProduct);
                     });
 
@@ -245,7 +250,7 @@ public class OrderService extends BaseController {
     public ApiResponse getBySession(String sessionId) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
-            List<OrderBean> orders = orderRepository.findBySessionId(sessionId);
+            List<OrderPaymentDTO> orders = orderRepository.findBySessionId(sessionId);
             if (orders == null || orders.isEmpty()) {
                 throw new OrderException("not.found", "order not found");
             }

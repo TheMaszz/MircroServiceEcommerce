@@ -2,11 +2,12 @@ package com.ecom.payment_service.service;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
-import com.ecom.common.bean.OrderPaymentDTO;
+import com.ecom.common.dto.OrderPaymentDTO;
 import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.dto.ProductRequest;
 import com.ecom.common.dto.StripeResponse;
 import com.ecom.payment_service.client.OrderClient;
+import com.ecom.payment_service.client.ProductClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -24,6 +25,7 @@ import java.util.List;
 public class PaymentService {
 
     private final OrderClient orderClient;
+    private final ProductClient productClient;
 
     @Value("${stripe.secretKey}")
     private String STRIPE_SECRET_KEY;
@@ -31,8 +33,9 @@ public class PaymentService {
     @Value("${stripe.endpointSecretKey}")
     private String STRIPE_ENDPOINT_SECRET;
 
-    public PaymentService(OrderClient orderClient) {
+    public PaymentService(OrderClient orderClient, ProductClient productClient) {
         this.orderClient = orderClient;
+        this.productClient = productClient;
     }
 
     public StripeResponse checkoutProducts(List<ProductRequest> productRequests, List<OrderPaymentDTO> ids) {
@@ -132,9 +135,9 @@ public class PaymentService {
 
         ApiResponse orderRes = orderClient.getBySession(sessionId);
         ObjectMapper objectMapper = new ObjectMapper();
-        List<OrderBean> orders = objectMapper.convertValue(
+        List<OrderPaymentDTO> orders = objectMapper.convertValue(
                 orderRes.getData(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, OrderBean.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OrderPaymentDTO.class)
         );
 
         orders.forEach(order -> {
@@ -145,8 +148,11 @@ public class PaymentService {
             paymentStatusBean.setStripe_checkout_url(null);
             paymentStatusBean.setStripe_session_id(null);
 
-            orderClient.updateStage(order.getId(), orderBean);
-            orderClient.updatePaymentStatus(order.getPayment_status_id(), paymentStatusBean);
+            orderClient.updateStage(order.getOrderId(), orderBean);
+            orderClient.updatePaymentStatus(order.getPaymentStatusId(), paymentStatusBean);
+            order.getProducts().forEach(product -> {
+                productClient.updateQty(product.getProduct_id(), product.getQty());
+            });
         });
 
     }
@@ -160,9 +166,9 @@ public class PaymentService {
 
         ApiResponse orderRes = orderClient.getBySession(sessionId);
         ObjectMapper objectMapper = new ObjectMapper();
-        List<OrderBean> orders = objectMapper.convertValue(
+        List<OrderPaymentDTO> orders = objectMapper.convertValue(
                 orderRes.getData(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, OrderBean.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OrderPaymentDTO.class)
         );
 
         orders.forEach(order -> {
@@ -173,18 +179,16 @@ public class PaymentService {
             paymentStatusBean.setStripe_checkout_url(null);
             paymentStatusBean.setStripe_session_id(null);
 
-            orderClient.updateStage(order.getId(), orderBean);
-            orderClient.updatePaymentStatus(order.getPayment_status_id(), paymentStatusBean);
+            orderClient.updateStage(order.getOrderId(), orderBean);
+            orderClient.updatePaymentStatus(order.getPaymentStatusId(), paymentStatusBean);
         });
     }
 
     public String expireBySessionId(String sessionId) {
         Stripe.apiKey = STRIPE_SECRET_KEY;
         try {
-            // Retrieve session
+            // for test expire session
             Session session = Session.retrieve(sessionId);
-
-            // Properly expire the session using the expire() method
             Session expiredSession = session.expire();
 
             return "Session expired: " + expiredSession.getId();

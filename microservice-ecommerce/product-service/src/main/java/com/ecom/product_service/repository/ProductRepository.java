@@ -150,5 +150,11 @@ public interface ProductRepository {
     })
     public List<ProductSearchDTO> findAutoCompleteProduct(HashMap<String, Object> params) throws BaseException;
 
+    @Update({
+            "UPDATE product SET",
+            "qty = #{currentQty}",
+            "WHERE id = #{id}"
+    })
+    public void updateQty(@Param("id") Long id, @Param("currentQty") Long currentQty) throws BaseException;
 
 }

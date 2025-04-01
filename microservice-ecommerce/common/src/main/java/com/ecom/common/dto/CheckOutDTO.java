@@ -1,6 +1,5 @@
-package com.ecom.common.bean;
+package com.ecom.common.dto;
 
-import com.ecom.common.dto.ProductRequest;
 import lombok.Data;
 
 import java.util.List;

@@ -4,6 +4,7 @@ import com.ecom.common.bean.OrderBean;
 import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
+import com.ecom.common.dto.OrderPaymentDTO;
 import com.ecom.common.exception.BaseException;
 import org.apache.ibatis.annotations.*;
 
@@ -19,16 +20,22 @@ public interface OrderRepository {
             " o.id,",
             " o.user_id,",
             " o.address_id,",
+            " o.shop_id,",
             " o.stage,",
             " o.total_amount,",
             " o.created_at,",
             " o.updated_at,",
-            " u.username",
+            " u.username,",
+            " u2.username AS shop_name",
             "FROM order_master AS o",
             "LEFT JOIN user AS u ON o.user_id = u.id",
+            "LEFT JOIN user AS u2 ON o.shop_id = u2.id",
             "WHERE o.user_id = #{user_id}",
             "<if test='search != null and search != \"\"'>",
             " AND o.id LIKE CONCAT('%', #{search}, '%')",
+            "</if>",
+            "<if test='stage != \"All\"'>",
+            " AND o.stage = #{stage}",
             "</if>",
             "<if test='isCount == false'>",
             " Order by ${sorting} ${sort_type} limit #{start}, #{end}",
@@ -41,12 +48,15 @@ public interface OrderRepository {
                     @Result(property = "id", column = "id"),
                     @Result(property = "user_id", column = "user_id"),
                     @Result(property = "address_id", column = "address_id"),
+                    @Result(property = "shop_id", column = "shop_id"),
                     @Result(property = "stage", column = "stage"),
                     @Result(property = "total_amount", column = "total_amount"),
                     @Result(property = "created_at", column = "created_at"),
                     @Result(property = "updated_at", column = "updated_at"),
                     @Result(property = "products", column = "id",
-                            many = @Many(select = "findOrderProductByOrderId"))
+                            many = @Many(select = "findOrderProductByOrderId")),
+                    @Result(property = "paymentStatus", column = "id",
+                            many = @Many(select = "findPaymentStatusByOrderId"))
             }
     )
     public List<OrderBean> findMyOrders(HashMap<String, Object> params) throws BaseException;
@@ -60,11 +70,17 @@ public interface OrderRepository {
                     @Result(property = "id", column = "id"),
                     @Result(property = "order_id", column = "order_id"),
                     @Result(property = "product_id", column = "product_id"),
+                    @Result(property = "qty", column = "qty"),
                     @Result(property = "productDetail", column = "product_id",
                             many = @Many(select = "findProductById"))
             }
     )
     public List<OrderBean.OrderProduct> findOrderProductByOrderId(Long id) throws BaseException;
+
+    @Select({
+            "SELECT * FROM payment_status WHERE order_id = #{id}"
+    })
+    public PaymentStatusBean findPaymentStatusByOrderId(Long id) throws BaseException;
 
     @Select({
             "<script>",
@@ -198,10 +214,10 @@ public interface OrderRepository {
     @Insert({
             "<script>",
             "INSERT INTO order_product",
-            "(order_id, product_id)",
+            "(order_id, product_id, qty)",
             "VALUES",
             "<foreach collection='orderProduct' item='op' separator=','>",
-            " (#{op.order_id}, #{op.product_id})",
+            " (#{op.order_id}, #{op.product_id}, #{op.qty})",
             "</foreach>",
             "</script>"
     })
@@ -233,12 +249,21 @@ public interface OrderRepository {
     public void updatePaymentStatus(PaymentStatusBean paymentStatusBean) throws BaseException;
 
     @Select({
-            "SELECT om.id, ps.id AS payment_status_id ",
+            "SELECT om.id AS orderId, ps.id AS paymentStatusId",
             "FROM payment_status AS ps",
             "JOIN order_master AS om ON ps.order_id = om.id",
             "WHERE ps.stripe_session_id = #{sessionId}"
     })
-    public List<OrderBean> findBySessionId(String sessionId) throws BaseException;
+    @Results(
+            id = "OrderPaymentBySession",
+            value = {
+                    @Result(property = "orderId", column = "orderId"),
+                    @Result(property = "paymentStatusId", column = "paymentStatusId"),
+                    @Result(property = "products", column = "orderId",
+                            many = @Many(select = "findOrderProductByOrderId"))
+            }
+    )
+    public List<OrderPaymentDTO> findBySessionId(String sessionId) throws BaseException;
 
     @Select({
             "SELECT * FROM payment_status WHERE id = #{id}"

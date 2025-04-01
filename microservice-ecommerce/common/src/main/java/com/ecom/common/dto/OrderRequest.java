@@ -15,5 +15,6 @@ public class OrderRequest {
     @Data
     public static class Product{
         private Long product_id;
+        private Long qty;
     }
 }

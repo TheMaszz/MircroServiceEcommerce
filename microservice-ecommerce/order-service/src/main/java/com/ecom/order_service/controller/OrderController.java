@@ -31,9 +31,10 @@ public class OrderController {
             @RequestParam(name = "page_number", required = false) int page_number,
             @RequestParam(name = "page_size", required = false) int page_size,
             @RequestParam(name = "sort", required = false) String sort,
-            @RequestParam(name = "sort_type", required = false) String sort_type
+            @RequestParam(name = "sort_type", required = false) String sort_type,
+            @RequestParam(name = "stage", required = false) String stage
     ) throws BaseException {
-        ApiResponse res = orderService.getMyOrders(request, search, page_number, page_size, sort, sort_type);
+        ApiResponse res = orderService.getMyOrders(request, search, page_number, page_size, sort, sort_type, stage);
         return res;
     }
 
