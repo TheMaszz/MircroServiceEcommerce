@@ -21,7 +21,6 @@ import { CartItem } from 'app/models/cart.model';
   standalone: true,
   imports: [MaterialModules, CommonModule, ImageUrlPipe],
   templateUrl: './product.component.html',
-  styleUrl: './product.component.scss',
 })
 export class ProductComponent implements OnInit, OnDestroy {
   constructor(

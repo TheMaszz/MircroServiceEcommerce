@@ -5,13 +5,13 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { ProductService } from 'app/core/services/product.service';
+import { ProductModel } from 'app/models/product.model';
 
 @Component({
   selector: 'app-products',
   standalone: true,
   imports: [ProductCardComponent, CommonModule, PaginationComponent],
   templateUrl: './products.component.html',
-  styleUrl: './products.component.scss',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   constructor(
@@ -22,7 +22,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject<void>();
 
-  products: any[] = [];
+  products: ProductModel[] = [];
   currentPage: number = 1;
   totalPages: number = 0;
   searchProduct: string = '';

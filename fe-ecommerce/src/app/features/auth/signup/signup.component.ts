@@ -15,7 +15,6 @@ import { AuthService } from 'app/core/services/auth.service';
   standalone: true,
   imports: [RouterModule, MaterialModules, ReactiveFormsModule, CommonModule],
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss',
 })
 export class SignupComponent {
   constructor(

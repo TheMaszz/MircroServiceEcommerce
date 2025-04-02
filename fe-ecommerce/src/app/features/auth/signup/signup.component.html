@@ -50,8 +50,8 @@
             (click)="onSubmitHandler()">
             สมัครสมาชิก
         </button>
-        <a href="/auth/signin" class="text-sm">
+        <span [routerLink]="'/auth/signin'" class="text-sm">
             หากคุณมีบัญชีอยู่แล้ว <span class="text-sky-500 underline">คลิก</span>
-        </a>
+        </span>
     </div>
 </form>

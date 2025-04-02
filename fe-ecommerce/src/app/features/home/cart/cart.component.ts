@@ -1,19 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MaterialModules } from 'app/core/modules/material.module';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 import { CartService } from 'app/core/services/cart.service';
-import { OrderService } from 'app/core/services/order.service';
 import { CartGroup, CartItem } from 'app/models/cart.model';
 import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [MaterialModules, ImageUrlPipe, CommonModule],
+  imports: [MaterialModules, ImageUrlPipe, CommonModule, RouterLink],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss',
 })
 export class CartComponent implements OnInit, OnDestroy {
   constructor(private cartService: CartService, private router: Router) {}

@@ -16,7 +16,7 @@
     <div class="mb-4" *ngFor="let cart of carts; trackBy: trackByCartId">
         <div class="grid grid-cols-12 p-4 border rounded-md bg-white mb-2">
             <mat-checkbox [checked]="cart.selected" (change)="toggleCartSelection(cart)">
-                <a [href]="'/user/'+cart.created_by" (click)="$event.stopPropagation();">{{ cart.created_user }}</a>
+                <span [routerLink]="'/user/'+cart.created_by" (click)="$event.stopPropagation();">{{ cart.created_user }}</span>
             </mat-checkbox>
         </div>
         <div class="border rounded-md bg-white">
@@ -24,12 +24,12 @@
                 class="grid grid-cols-12 p-4 items-center border-b last:border-b-0">
                 <div class="col-span-4">
                     <mat-checkbox [checked]="product.selected" (change)="toggleProductSelection(cart, product)">
-                        <a [href]="'/products/'+product.id" (click)="$event.stopPropagation();">
+                        <span [routerLink]="'/products/'+product.id" (click)="$event.stopPropagation();">
                             <div class="flex gap-2 items-center">
                                 <img [src]="product.imageUrl | imageUrl" [alt]="product.name" class="h-[82px] w-[82px]">
                                 <p>{{ product.name }}</p>
                             </div>
-                        </a>
+                        </span>
                     </mat-checkbox>
                 </div>
                 <div class="col-span-2">

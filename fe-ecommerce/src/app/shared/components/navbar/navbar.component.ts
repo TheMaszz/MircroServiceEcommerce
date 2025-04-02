@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { MaterialModules } from 'app/core/modules/material.module';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 import { CartService } from 'app/core/services/cart.service';
@@ -26,7 +26,7 @@ import {
     MaterialModules,
     ReactiveFormsModule,
     CommonModule,
-    RouterModule,
+    RouterLink,
     ImageUrlPipe,
   ],
   templateUrl: './navbar.component.html',

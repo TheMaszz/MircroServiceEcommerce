@@ -1,1 +1,78 @@
-<p>order works!</p>
+<div class="mt-4">
+    <div class="p-4 border rounded-md bg-white mb-2 ">
+        <div class="flex items-center justify-between border-b">
+            <div class="flex items-center gap-1">
+                <button mat-icon-button (click)="backNavigate()">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+                <span>ย้อนกลับ</span>
+            </div>
+            <div>
+                <p class="text-right text-gray-500">{{ order.created_at }}</p>
+                <div class="flex items-center gap-1">
+                    <span>หมายเลขคำสั่งซื้อ {{order.id}} | </span>
+                    <div class="flex items-center space-x-2">
+                        <mat-icon [ngClass]="checkStageColor(order.stage)">
+                            {{ checkStage2Icon(order.stage) }}
+                        </mat-icon>
+                        <span [ngClass]="checkStageColor(order.stage)">
+                            {{ checkStage2Text(order.stage) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+        <div class="pt-6">
+            <mat-horizontal-stepper [selectedIndex]="getStageIndex(order.stage)" linear [disableRipple]="true">
+                <mat-step *ngFor="let stage of stages; let i = index" [completed]="i < getStageIndex(order.stage)"
+                    [editable]="false">
+                    <ng-template matStepLabel>
+                        <div class="flex items-center space-x-2">
+                            <mat-icon [ngClass]="{'text-green-500': markStage(order.stage, stage.value)}">
+                                {{ stage.icon }}
+                            </mat-icon>
+                            <span [ngClass]="{'text-green-500': markStage(order.stage, stage.value)}">
+                                {{ stage.text }}
+                            </span>
+                        </div>
+                    </ng-template>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </div>
+
+    </div>
+
+    <div class="p-4 border rounded-md bg-white">
+        <!-- Header Order -->
+        <div class="w-full border-b py-2 flex items-center justify-between">
+            <span [routerLink]="'/user/' + order.shop_id" class="cursor-pointer">
+                {{ order.shop_name }}
+            </span>
+        </div>
+
+        <!-- Body Order -->
+        <div *ngFor="let product of order.products; trackBy: trackByProduct" class="py-2 border-b grid grid-cols-8">
+            <div class="col-span-7 flex gap-2 items-start">
+                <img [src]="product.productDetail.product_image[0].image_url | imageUrl"
+                    [alt]="product.productDetail.name" class="h-[82px] w-[82px] object-cover rounded-md">
+                <span [routerLink]="'/products/' + product.product_id" class="cursor-pointer">
+                    {{ product.productDetail.name }}
+                </span>
+            </div>
+            <div class="col-span-1 flex flex-col items-end">
+                <p>{{ product.productDetail.price | currency: 'THB':'฿':'1.2-2' }}</p>
+                <p>x{{ product.qty }}</p>
+                <p class="font-medium">{{ (product.productDetail.price * product.qty) | currency:
+                    'THB':'฿':'1.2-2' }}</p>
+            </div>
+        </div>
+
+        <!-- Footer Order -->
+        <div class="text-right pt-2 font-semibold text-primary-500">
+            รวม {{ order.total_amount | currency: 'THB':'฿':'1.2-2' }}
+        </div>
+    </div>
+
+
+</div>

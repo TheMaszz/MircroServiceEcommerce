@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -15,7 +15,6 @@ import { AuthService } from 'app/core/services/auth.service';
   standalone: true,
   imports: [RouterModule, MaterialModules, ReactiveFormsModule, CommonModule],
   templateUrl: './signin.component.html',
-  styleUrl: './signin.component.scss',
 })
 export class SigninComponent {
   constructor(

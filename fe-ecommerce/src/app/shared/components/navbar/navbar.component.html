@@ -2,7 +2,7 @@
     <!-- Logo -->
     <div class="flex items-center space-x-4">
         <img src="/assets/logo.png" alt="Logo" class="h-8 w-auto">
-        <a href="/">ShopMate</a>
+        <span routerLink="/" class="cursor-pointer">ShopMate</span>
     </div>
 
     <!-- Center Links -->
@@ -55,8 +55,8 @@
                 <mat-icon>account_circle</mat-icon>
             </button>
             <mat-menu #accountMenu="matMenu" xPosition="before">
-                <a mat-menu-item href="">แก้ไขบัญชีของฉัน</a>
-                <a mat-menu-item href="/orders">ดูการสั่งซื้อ</a>
+                <span mat-menu-item routerLink="">บัญชีของฉัน</span>
+                <span mat-menu-item routerLink="/orders">ดูการสั่งซื้อ</span>
                 <button mat-menu-item (click)="logout()">ออกจากระบบ</button>
             </mat-menu>
         </ng-container>

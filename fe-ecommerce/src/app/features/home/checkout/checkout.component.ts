@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModules } from 'app/core/modules/material.module';
@@ -11,12 +11,10 @@ import { UserService } from 'app/core/services/user.service';
 import { CartGroup } from 'app/models/cart.model';
 import { OrderRequest } from 'app/models/order.model';
 import { ResponseModel } from 'app/models/response.model';
-import {
-  CheckOutDTO,
-  StripeResponse,
-} from 'app/models/stripe.model';
+import { CheckOutDTO, StripeResponse } from 'app/models/stripe.model';
 import { Address } from 'app/models/user.model';
 import { ModalCheckoutComponent } from './components/modal-checkout/modal-checkout.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-checkout',
@@ -27,9 +25,9 @@ import { ModalCheckoutComponent } from './components/modal-checkout/modal-checko
     MaterialModules,
     FormsModule,
     ModalCheckoutComponent,
+    RouterLink
   ],
   templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.scss',
 })
 export class CheckoutComponent implements OnInit {
   constructor(
@@ -59,12 +57,12 @@ export class CheckoutComponent implements OnInit {
         this.myAddress = res.data;
         this.selectedAddress = this.myAddress[0];
         console.log('my address: ', this.myAddress);
-        window.closeLoading;
+        window.closeLoading();
       });
     }
   }
 
-  calcTotalPriceOfShop(cart: CartGroup): number {
+  calcTotalPricePerShop(cart: CartGroup): number {
     return cart.products.reduce((sum, product) => sum + product.totalPrice!, 0);
   }
 
@@ -90,7 +88,7 @@ export class CheckoutComponent implements OnInit {
         created_by: cart.created_by,
         address_id: this.selectedAddress.id,
         stage: 'Pending',
-        total_amount: this.calcTotalPriceOfShop(cart),
+        total_amount: this.calcTotalPricePerShop(cart),
         products: this.normalizeOrderData(cart),
       };
       normalizeData.push(newData);
@@ -115,8 +113,7 @@ export class CheckoutComponent implements OnInit {
             ids: orderRes.data,
           };
 
-          console.log("normalizeProduct: ", normalizeProduct);
-          
+          console.log('normalizeProduct: ', normalizeProduct);
 
           this.paymentService
             .checkoutProducts(normalizeProduct)
@@ -138,6 +135,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   normalizeOrderData(cartGroup: CartGroup) {
-    return cartGroup.products.map((p) => ({ product_id: p.id }));
+    return cartGroup.products.map((p) => ({ product_id: p.id, qty: p.qty }));
   }
 }

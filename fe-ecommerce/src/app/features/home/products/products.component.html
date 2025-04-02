@@ -6,5 +6,7 @@
                 [imgUrl]="product.product_image[0].image_url" />
         </ng-container>
     </div>
-    <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChanged($event)" />
+    <ng-container *ngIf="products.length > 0">
+        <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChanged($event)" />
+    </ng-container>
 </div>

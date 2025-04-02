@@ -8,9 +8,9 @@
     <div class="mb-4 p-4 bg-white rounded-md border" *ngFor="let cart of selectedItems;">
         <!-- header order -->
         <div class="w-full border-b py-2">
-            <a [href]="'/user/'+ cart.created_by">
+            <span [routerLink]="'/user/'+ cart.created_by">
                 {{ cart.created_user }}
-            </a>
+            </span>
         </div>
         <!-- body order -->
         <div *ngFor="let product of cart.products" class="py-2 border-b grid grid-cols-8">
@@ -30,7 +30,7 @@
         </div>
         <!-- footer order -->
         <div class="text-right pt-2">
-            <span>รวม {{calcTotalPriceOfShop(cart) | currency:'THB':'฿':'1.2-2' }}</span>
+            <span>รวม {{calcTotalPricePerShop(cart) | currency:'THB':'฿':'1.2-2' }}</span>
         </div>
     </div>
 

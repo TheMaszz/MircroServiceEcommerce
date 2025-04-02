@@ -20,7 +20,7 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <a href="/auth/forgot-password" class="w-full text-sm text-right text-sky-500 underline block">
+        <a [routerLink]="'/auth/forgot-password'" class="w-full text-sm text-right text-sky-500 underline block">
             ลืมรหัสผ่าน?
         </a>
 
@@ -31,7 +31,7 @@
             (click)="onSubmitHandler()">
             เข้าสู่ระบบ
         </button>
-        <a href="/auth/signup" class="text-sm">
+        <a [routerLink]="'/auth/signup'" class="text-sm">
             หากคุณยังไม่มีบัญชี <span class="text-sky-500 underline">คลิก</span>
         </a>
     </div>

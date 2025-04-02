@@ -5,7 +5,7 @@ import { MaterialModules } from 'app/core/modules/material.module';
 @Component({
   selector: 'app-checkout-cancel',
   standalone: true,
-  imports: [MaterialModules, RouterModule],
+  imports: [MaterialModules],
   templateUrl: './checkout-cancel.component.html'
 })
 export class CheckoutCancelComponent {
