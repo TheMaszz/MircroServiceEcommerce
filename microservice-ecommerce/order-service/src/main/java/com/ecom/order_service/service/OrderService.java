@@ -2,9 +2,9 @@ package com.ecom.order_service.service;
 
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.OrderBean;
-import com.ecom.common.dto.OrderPaymentDTO;
 import com.ecom.common.bean.PaymentStatusBean;
 import com.ecom.common.controller.BaseController;
+import com.ecom.common.dto.OrderPaymentDTO;
 import com.ecom.common.dto.OrderRequest;
 import com.ecom.common.exception.BaseException;
 import com.ecom.order_service.exception.OrderException;
@@ -12,7 +12,10 @@ import com.ecom.order_service.repository.OrderRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,9 +44,15 @@ public class OrderService extends BaseController {
             if (search != null && !search.isEmpty()) {
                 params.put("search", search);
             }
-            if(stage != null && !stage.isEmpty()){
-                params.put("stage", stage);
+            if (stage != null && !stage.isEmpty()) {
+                if (stage.contains("||")) {
+                    String[] stages = stage.split("\\|\\|");
+                    params.put("stageList", Arrays.asList(stages));
+                } else {
+                    params.put("stage", stage); // Single stage
+                }
             }
+
             this.pagination(page_number, page_size, sort, sort_type, params);
             params.put("isCount", false);
             List<OrderBean> orders = orderRepository.findMyOrders(params);

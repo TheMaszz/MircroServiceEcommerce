@@ -34,11 +34,20 @@ public interface OrderRepository {
             "<if test='search != null and search != \"\"'>",
             " AND o.id LIKE CONCAT('%', #{search}, '%')",
             "</if>",
-            "<if test='stage != \"All\"'>",
+
+            "<if test='stageList != null and stageList.size() > 0'>",
+            " AND o.stage IN ",
+            "<foreach item='stg' collection='stageList' open='(' separator=',' close=')'>",
+            " #{stg} ",
+            "</foreach>",
+            "</if>",
+
+            "<if test='stage != \"All\" and (stageList == null or stageList.size() == 0)'>",
             " AND o.stage = #{stage}",
             "</if>",
+
             "<if test='isCount == false'>",
-            " Order by ${sorting} ${sort_type} limit #{start}, #{end}",
+            " ORDER BY ${sorting} ${sort_type} LIMIT #{start}, #{end}",
             "</if>",
             "</script>"
     })
@@ -53,6 +62,7 @@ public interface OrderRepository {
                     @Result(property = "total_amount", column = "total_amount"),
                     @Result(property = "created_at", column = "created_at"),
                     @Result(property = "updated_at", column = "updated_at"),
+                    @Result(property = "shop_name", column = "shop_name"),
                     @Result(property = "products", column = "id",
                             many = @Many(select = "findOrderProductByOrderId")),
                     @Result(property = "paymentStatus", column = "id",
@@ -134,8 +144,10 @@ public interface OrderRepository {
             " o.created_at,",
             " o.updated_at,",
             " u.username",
+            " u2.username AS shop_name",
             "FROM order_master AS o",
             "LEFT JOIN user AS u ON o.user_id = u.id",
+            "LEFT JOIN user AS u2 ON o.user_id = u2.id",
             "WHERE 1=1",
             "<if test='search != null and search != \"\"'>",
             " AND o.id LIKE CONCAT('%', #{search}, '%')",
@@ -155,6 +167,7 @@ public interface OrderRepository {
                     @Result(property = "total_amount", column = "total_amount"),
                     @Result(property = "created_at", column = "created_at"),
                     @Result(property = "updated_at", column = "updated_at"),
+                    @Result(property = "shop_name", column = "shop_name"),
                     @Result(property = "products", column = "id",
                             many = @Many(select = "findOrderProductByOrderId"))
             }
@@ -167,13 +180,16 @@ public interface OrderRepository {
             " o.id,",
             " o.user_id,",
             " o.address_id,",
+            " o.shop_id,",
             " o.stage,",
             " o.total_amount,",
             " o.created_at,",
             " o.updated_at,",
-            " u.username",
+            " u.username,",
+            " u2.username AS shop_name",
             "FROM order_master AS o",
             "LEFT JOIN user AS u ON o.user_id = u.id",
+            "LEFT JOIN user AS u2 ON o.shop_id = u2.id",
             "WHERE o.id = #{id}",
             "</script>"
     })
@@ -183,10 +199,12 @@ public interface OrderRepository {
                     @Result(property = "id", column = "id"),
                     @Result(property = "user_id", column = "user_id"),
                     @Result(property = "address_id", column = "address_id"),
+                    @Result(property = "shop_id", column = "shop_id"),
                     @Result(property = "stage", column = "stage"),
                     @Result(property = "total_amount", column = "total_amount"),
                     @Result(property = "created_at", column = "created_at"),
                     @Result(property = "updated_at", column = "updated_at"),
+                    @Result(property = "shop_name", column = "shop_name"),
                     @Result(property = "products", column = "id",
                             many = @Many(select = "findOrderProductByOrderId"))
             }
