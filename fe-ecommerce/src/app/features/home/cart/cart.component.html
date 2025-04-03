@@ -16,7 +16,7 @@
     <div class="mb-4" *ngFor="let cart of carts; trackBy: trackByCartId">
         <div class="grid grid-cols-12 p-4 border rounded-md bg-white mb-2">
             <mat-checkbox [checked]="cart.selected" (change)="toggleCartSelection(cart)">
-                <span [routerLink]="'/user/'+cart.created_by" (click)="$event.stopPropagation();">{{ cart.created_user }}</span>
+                <span [routerLink]="'/shop/'+cart.created_by" (click)="$event.stopPropagation();">{{ cart.created_user }}</span>
             </mat-checkbox>
         </div>
         <div class="border rounded-md bg-white">

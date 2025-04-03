@@ -4,18 +4,18 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { ProductService } from 'app/core/services/product.service';
+import { OrderService } from 'app/core/services/order.service';
 import { Observable, of } from 'rxjs';
 
-export const getProductById: ResolveFn<any> = (
+
+export const getOrderById: ResolveFn<any> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
 ): Observable<any> => {
   const id = route.paramMap.get('id');
   if (id) {
-    return inject(ProductService).getProductById(Number.parseInt(id));
+    return inject(OrderService).getOrderById(Number.parseInt(id));
   } else {
     return of(null);
   }
 };
-

@@ -23,7 +23,7 @@
             <div class="mb-4 p-4 bg-white rounded-md border">
                 <!-- Header Order -->
                 <div class="w-full border-b py-2 flex items-center justify-between">
-                    <span [routerLink]="'/user/' + order.shop_id" class="cursor-pointer">
+                    <span [routerLink]="'/shop/' + order.shop_id" class="cursor-pointer">
                         {{ order.shop_name }}
                     </span>
                     <div class="flex items-center space-x-2">
@@ -61,7 +61,7 @@
 
                 <!-- Order Detail Button -->
                 <div class="text-right mt-4">
-                    <button mat-flat-button [routerLink]="'/orders/' + order.id" color="primary">
+                    <button mat-flat-button [routerLink]="'/user/orders/' + order.id" color="primary">
                         ดูรายละเอียดออเดอร์
                     </button>
                 </div>

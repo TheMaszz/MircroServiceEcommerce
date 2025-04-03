@@ -17,4 +17,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
+  {
+    path: 'user',
+    component: MainLayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./features/user/user.routes').then((m) => m.USER_ROUTES),
+  },
+
 ];

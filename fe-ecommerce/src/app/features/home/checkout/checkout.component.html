@@ -8,7 +8,7 @@
     <div class="mb-4 p-4 bg-white rounded-md border" *ngFor="let cart of selectedItems;">
         <!-- header order -->
         <div class="w-full border-b py-2">
-            <span [routerLink]="'/user/'+ cart.created_by">
+            <span [routerLink]="'/shop/'+ cart.created_by">
                 {{ cart.created_user }}
             </span>
         </div>
