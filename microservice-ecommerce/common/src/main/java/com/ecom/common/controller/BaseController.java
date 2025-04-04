@@ -13,24 +13,33 @@ import java.util.List;
 
 @RestControllerAdvice
 public class BaseController {
-    protected void checkException(Exception e, ApiResponse res) throws BaseException {
-        if (e instanceof BaseException) {
-            BaseException be = (BaseException) e;
-            res.setError(be.getCode(), be.getMessage());
-            throw be; // Re-throw specific BaseException
+
+    protected ApiResponse checkException(Exception e, ApiResponse res)  {
+        if (e.getMessage().equals("Unauthorized")) {
+            res.setError("UNAUTHORIZED", "Authentication required", "40100", 401);
+        } else if (e.getMessage().contains("Duplicate")) {
+            res.setError("DUPLICATE_ENTRY", "Duplicated, " + e.getCause(), "40900", 409);
         } else {
             res.setError("INTERNAL_SERVER_ERROR", e.getMessage());
-            throw new BaseException("INTERNAL_SERVER_ERROR", e.getMessage()) {
-            };
         }
+        return res;
     }
 
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiResponse> handleBaseException(BaseException e) {
-        ApiResponse response = new ApiResponse();
-        response.setError(e.getCode(), e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(BaseException.class)
+//    public ResponseEntity<ApiResponse> handleBaseException(BaseException e) {
+//        ApiResponse response = new ApiResponse();
+//        response.setError(e.getCode(), e.getMessage());
+//
+//        // Return appropriate HTTP status based on error code
+//        HttpStatus status = switch (e.getCode()) {
+//            case "UNAUTHORIZED" -> HttpStatus.UNAUTHORIZED;
+//            case "DUPLICATE_ENTRY" -> HttpStatus.CONFLICT;
+//            case "NOT_FOUND" -> HttpStatus.NOT_FOUND;
+//            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+//        };
+//
+//        return new ResponseEntity<>(response, status);
+//    }
 
     protected HashMap<String, Object> pagination(
             int page_number,
@@ -41,7 +50,7 @@ public class BaseController {
     ) throws Exception {
 
         List<String> allowedSortingColumns = Arrays.asList("ASC", "DESC");
-        if(!allowedSortingColumns.contains(sort_type.toUpperCase())){
+        if (!allowedSortingColumns.contains(sort_type.toUpperCase())) {
             throw new Exception("Sorting only supports ASC or DESC.");
         }
 

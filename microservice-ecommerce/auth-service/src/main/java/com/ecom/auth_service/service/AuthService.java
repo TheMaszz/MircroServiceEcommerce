@@ -70,6 +70,10 @@ public class AuthService extends BaseController {
                 user = userRepository.findByUsername(usernameOrEmail);
             }
 
+            if (user == null) {
+                throw new AuthException("not.found", "User Not Found");
+            }
+
             if (!matchPassword(userBean.getPassword(), user.getPassword())) {
                 throw new AuthException("password.not.match", "Password incorrect");
             }
@@ -196,7 +200,7 @@ public class AuthService extends BaseController {
         }
     }
 
-    private String checkRole(Integer role){
+    private String checkRole(Integer role) {
         return switch (role) {
             case 0 -> "ADMIN";
             case 1 -> "USER";

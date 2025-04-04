@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class ApiResponse {
     private String response_ref;
     private String response_datetime;
-    private String status;
+    private int status;
     private String errorCode;
     private String response_code = "20000";
     private String response_desc = "success";
@@ -18,13 +18,20 @@ public class ApiResponse {
 
     public ApiResponse() {
 		this.response_datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		this.status = "success"; 
+		this.status = 200;
 	}
 
     public void setError(String errorCode, String response_desc) {
         this.errorCode = errorCode;
         this.response_code = "50000";
         this.response_desc = response_desc;
-        this.status = "error";
+        this.status = 500;
+    }
+
+    public void setError(String errorCode, String response_desc, String response_code, int status) {
+        this.errorCode = errorCode;
+        this.response_code = response_code;
+        this.response_desc = response_desc;
+        this.status = status;
     }
 }

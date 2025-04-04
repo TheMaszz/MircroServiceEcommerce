@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/getAll")
-    public ApiResponse getProducts(
+    public ResponseEntity<ApiResponse> getProducts(
             @RequestParam(name = "search", required = false) String search,
             @RequestParam(name = "page_number", required = false) int page_number,
             @RequestParam(name = "page_size", required = false) int page_size,
@@ -35,17 +36,17 @@ public class ProductController {
             @RequestParam(name = "sort_type", required = false) String sort_type
     ) throws BaseException {
         ApiResponse res = productService.getAllProduct(search, page_number, page_size, sort, sort_type);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse getProductById(@PathVariable Long id) throws BaseException {
+    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) throws BaseException {
         ApiResponse res = productService.getProductById(id);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse createProduct(
+    public ResponseEntity<ApiResponse> createProduct(
             HttpServletRequest request,
             @RequestPart("product") String productJson,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
@@ -54,11 +55,11 @@ public class ProductController {
         ProductBean productBean = objectMapper.readValue(productJson, ProductBean.class);
 
         ApiResponse res = productService.createProduct(productBean, files, request);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse updateProduct(
+    public ResponseEntity<ApiResponse> updateProduct(
             HttpServletRequest request,
             @PathVariable Long id,
             @RequestPart("product") String productJson,
@@ -70,36 +71,36 @@ public class ProductController {
         ProductBean productBean = objectMapper.readValue(productJson, ProductBean.class);
 
         ApiResponse res = productService.updateProduct(id, productBean, files, request);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ApiResponse deleteProduct(
+    public ResponseEntity<ApiResponse> deleteProduct(
             HttpServletRequest request,
             @PathVariable Long id
     ) throws BaseException {
         ApiResponse res = productService.deleteProduct(id, request);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @GetMapping("/getAutoComplete")
-    public ApiResponse getAutoComplete(
+    public ResponseEntity<ApiResponse> getAutoComplete(
             HttpServletRequest request,
             @RequestParam(name = "search", required = false) String search,
             @RequestParam(name = "limit", required = false) Long limit
     ) throws BaseException {
         ApiResponse res = productService.getAutoComplete(search, limit);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/updateQty/{id}")
-    public ApiResponse updateQty(
+    public ResponseEntity<ApiResponse> updateQty(
             HttpServletRequest request,
             @PathVariable Long id,
             @RequestBody Long qty
     ) throws BaseException {
         ApiResponse res = productService.updateQty(id, qty);
-        return res;
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
 }

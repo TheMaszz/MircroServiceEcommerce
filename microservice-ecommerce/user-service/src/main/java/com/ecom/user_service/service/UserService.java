@@ -68,6 +68,23 @@ public class UserService extends BaseController {
         return res;
     }
 
+    public ApiResponse findMyProfile(HttpServletRequest request) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try{
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+
+            UserBean user = userRepository.findUserById(Long.valueOf(userId));
+            res.setData(user);
+            if (user == null) {
+                throw new UserException("not.found", "user not found");
+            }
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
     public ApiResponse updateUser(
             Long id,
             UserBean userBean,
@@ -83,7 +100,7 @@ public class UserService extends BaseController {
             userBean.setId(id);
 
             UserBean user = userRepository.findUserById(id);
-            if(user == null){
+            if (user == null) {
                 throw new UserException("not.found", "user not found");
             }
 
@@ -113,7 +130,7 @@ public class UserService extends BaseController {
             String role = request.getHeader("X-Role");
 
             UserBean user = userRepository.findUserById(id);
-            if(user == null){
+            if (user == null) {
                 throw new UserException("not.found", "user not found");
             }
 
@@ -129,7 +146,7 @@ public class UserService extends BaseController {
             HttpServletRequest request
     ) throws BaseException {
         ApiResponse res = new ApiResponse();
-        try{
+        try {
             String userId = request.getHeader("X-User-Id");
             List<AddressBean> address = userRepository.getAddressByUserId(Long.valueOf(userId));
 
@@ -159,11 +176,11 @@ public class UserService extends BaseController {
     public ApiResponse updateAddress(
             Long id,
             AddressBean addressBean
-    ) throws BaseException{
+    ) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
             AddressBean address = userRepository.getAddressById(id);
-            if(address == null){
+            if (address == null) {
                 throw new UserException("address.not.found", "Address not found");
             }
 
@@ -174,8 +191,6 @@ public class UserService extends BaseController {
         }
         return res;
     }
-
-
 
 
 }
