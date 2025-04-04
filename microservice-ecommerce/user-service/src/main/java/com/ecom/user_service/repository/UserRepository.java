@@ -61,27 +61,45 @@ public interface UserRepository {
     public AddressBean getAddressById(Long id) throws BaseException;
 
     @Select({
-            "SELECT * FROM address WHERE user_id = #{userId}"
+            "SELECT * FROM address WHERE user_id = #{userId} ORDER BY default_address DESC "
     })
     public List<AddressBean> getAddressByUserId(Long userId) throws BaseException;
 
     @Insert({
             "INSERT INTO address",
-            "(name, address, phone, description, user_id)",
+            "(name, fullname, address, phone, description, user_id)",
             "VALUES",
-            "(#{name}, #{address}, #{phone}, #{description}, #{user_id})"
+            "(#{name}, #{fullname}, #{address}, #{phone}, #{description}, #{user_id})"
     })
     public void createAddress(AddressBean addressBean) throws BaseException;
 
     @Update({
             "UPDATE address SET",
             "name = #{name},",
+            "fullname = #{fullname},",
             "address = #{address},",
             "phone = #{phone},",
             "description = #{description}",
             "WHERE id = #{id}"
     })
     public void updateAddress(AddressBean addressBean) throws BaseException;
+
+    @Delete({
+            "DELETE FROM address WHERE id = #{id}"
+    })
+    public void deleteAddress(Long id) throws BaseException;
+
+    @Update({
+            "UPDATE address SET default_address = 1 WHERE id = #{id}"
+    })
+    public void defaultAddress(Long id) throws BaseException;
+
+    @Update({
+            "UPDATE address SET default_address = 0 WHERE user_id = #{userId}"
+    })
+    public void clearDefaultAddress(Long userId) throws BaseException;
+
+
 
 
 }

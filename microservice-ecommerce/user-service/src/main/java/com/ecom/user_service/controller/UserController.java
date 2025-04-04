@@ -103,4 +103,22 @@ public class UserController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @DeleteMapping("/address/delete/{id}")
+    public ResponseEntity<ApiResponse> deleteAddress(
+            HttpServletRequest request,
+            @PathVariable Long id
+    ) throws BaseException {
+        ApiResponse res = userService.deleteAddress(id);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/address/defaultAddress/{id}")
+    public ResponseEntity<ApiResponse> defaultAddress(
+            HttpServletRequest request,
+            @PathVariable Long id
+    ) throws BaseException {
+        ApiResponse res = userService.defaultAddress(request, id);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
 }

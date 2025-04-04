@@ -9,6 +9,7 @@ import com.ecom.user_service.exception.UserException;
 import com.ecom.user_service.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class UserService extends BaseController {
 
     public ApiResponse findMyProfile(HttpServletRequest request) throws BaseException {
         ApiResponse res = new ApiResponse();
-        try{
+        try {
             String userId = request.getHeader("X-User-Id");
             String role = request.getHeader("X-Role");
 
@@ -186,6 +187,41 @@ public class UserService extends BaseController {
 
             addressBean.setId(id);
             userRepository.updateAddress(addressBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse deleteAddress(Long id) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try {
+            AddressBean address = userRepository.getAddressById(id);
+            if (address == null) {
+                throw new UserException("address.not.found", "Address not found");
+            }
+
+            userRepository.deleteAddress(id);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    @Transactional
+    public ApiResponse defaultAddress(HttpServletRequest request, Long id) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try {
+            String userId = request.getHeader("X-User-Id");
+
+            AddressBean address = userRepository.getAddressById(id);
+            if (address == null) {
+                throw new UserException("address.not.found", "Address not found");
+            }
+
+            userRepository.clearDefaultAddress(Long.valueOf(userId));
+
+            userRepository.defaultAddress(id);
         } catch (Exception e) {
             this.checkException(e, res);
         }
