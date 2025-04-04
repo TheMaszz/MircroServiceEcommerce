@@ -15,7 +15,6 @@ import {
   Observable,
   startWith,
   Subject,
-  Subscription,
   switchMap,
 } from 'rxjs';
 

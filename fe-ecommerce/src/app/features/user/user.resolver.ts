@@ -5,8 +5,8 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { OrderService } from 'app/core/services/order.service';
+import { UserService } from 'app/core/services/user.service';
 import { Observable, of } from 'rxjs';
-
 
 export const getOrderById: ResolveFn<any> = (
   route: ActivatedRouteSnapshot,
@@ -18,4 +18,11 @@ export const getOrderById: ResolveFn<any> = (
   } else {
     return of(null);
   }
+};
+
+export const getMyProfile: ResolveFn<any> = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+): Observable<any> => {
+  return inject(UserService).getMyProfile();
 };

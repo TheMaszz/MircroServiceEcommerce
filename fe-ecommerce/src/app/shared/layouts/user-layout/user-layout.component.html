@@ -1,0 +1,59 @@
+<style>
+    .router-link-active {
+      color: blue;
+      font-weight: bold;
+    }
+  </style>
+  
+  <ng-container>
+    <app-navbar></app-navbar>
+    <div class="container flex items-start py-4">
+      <!-- Sidebar -->
+      <div class="w-1/5 border-r border-gray-200">
+        <nav>
+          <ul class="space-y-2">
+            <li *ngFor="let nav of navSide" class="list-none">
+              <ng-container *ngIf="nav.children; else singleLink">
+                <!-- เมนูที่มี Children (Dropdown) -->
+                <div (click)="toggleDropdown(nav)" 
+                     class="flex items-center gap-2 p-3 hover:bg-gray-100 rounded-md cursor-pointer">
+                  <mat-icon>{{ nav.icon }}</mat-icon>
+                  <span>{{ nav.text }}</span>
+                  <mat-icon class="ml-auto">
+                    {{ nav.isOpen ? 'expand_less' : 'expand_more' }}
+                  </mat-icon>
+                </div>
+  
+                <!-- Sub Menu -->
+                <ul *ngIf="nav.isOpen" class="pl-8 space-y-1">
+                  <li *ngFor="let child of nav.children" class="list-none">
+                    <a [routerLink]="[child.path]" 
+                       routerLinkActive="router-link-active" 
+                       class="block p-2 text-gray-600 hover:bg-gray-50 rounded-md">
+                      {{ child.text }}
+                    </a>
+                  </li>
+                </ul>
+              </ng-container>
+  
+              <!-- เมนูที่ไม่มี Children -->
+              <ng-template #singleLink>
+                <a [routerLink]="[nav.path]" 
+                   routerLinkActive="router-link-active" 
+                   class="flex items-center gap-2 p-3 hover:bg-gray-100 rounded-md">
+                  <mat-icon>{{ nav.icon }}</mat-icon>
+                  <span>{{ nav.text }}</span>
+                </a>
+              </ng-template>
+            </li>
+          </ul>
+        </nav>
+      </div>
+  
+      <!-- Content -->
+      <div class="w-4/5 bg-white border rounded-md p-4 min-h-96">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </ng-container>
+  

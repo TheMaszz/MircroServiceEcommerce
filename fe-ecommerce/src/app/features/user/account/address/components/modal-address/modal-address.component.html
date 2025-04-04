@@ -1,0 +1,71 @@
+<div class="p-4">
+    <h2 class="mb-4 text-xl">
+        {{data.condition === "create" ? "ที่อยู่ใหม่"
+        : data.condition === "update" ? "แก้ไขที่อยู่"
+        : "ลบที่อยู่" }}
+    </h2>
+
+    <ng-container *ngIf="data.condition === 'create' || data.condition === 'update' ">
+        <form [formGroup]="addressFormGroup" class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+                <mat-form-field class="w-full">
+                    <mat-label>ชื่อ</mat-label>
+                    <input type="text" matInput formControlName="name">
+                    <mat-error *ngIf="addressFormGroup.get('name')?.errors as errors">
+                        <ng-container *ngIf="errors['required']">ต้องการชื่อ</ng-container>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field class="w-full">
+                <mat-label>ชื่อ-นามสกุล</mat-label>
+                <input type="text" matInput formControlName="fullname">
+                <mat-error *ngIf="addressFormGroup.get('fullname')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการชื่อ-นามสกุล</ng-container>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>เบอร์โทร</mat-label>
+                <input type="text" matInput formControlName="phone">
+                <mat-error *ngIf="addressFormGroup.get('phone')?.errors as errors">
+                    <ng-container *ngIf="errors['required']">ต้องการเบอร์โทร</ng-container>
+                </mat-error>
+            </mat-form-field>
+
+            <div class="col-span-2">
+                <mat-form-field class="w-full">
+                    <mat-label>ที่อยู่</mat-label>
+                    <input type="text" matInput formControlName="address">
+                    <mat-error *ngIf="addressFormGroup.get('address')?.errors as errors">
+                        <ng-container *ngIf="errors['required']">ต้องการรหัสผ่าน</ng-container>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="col-span-2">
+                <mat-form-field class="w-full">
+                    <mat-label>รายละเอียด</mat-label>
+                    <input type="text" matInput formControlName="description">
+                </mat-form-field>
+            </div>
+        </form>
+    </ng-container>
+
+    <ng-container *ngIf="data.condition === 'delete'">
+
+    </ng-container>
+
+
+    <div class="flex gap-2 w-full items-center justify-end mt-4">
+        <button mat-stroked-button (click)="closeHandler()">
+            ยกเลิก
+        </button>
+        <button mat-flat-button cdkFocusInitial color="primary"
+            [disabled]="addressFormGroup.invalid && this.data.condition != 'delete'" 
+            (click)="submitHandler()">
+            ยืนยัน
+        </button>
+    </div>
+
+</div>

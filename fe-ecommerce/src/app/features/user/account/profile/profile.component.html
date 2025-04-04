@@ -1,0 +1,55 @@
+<div class="flex flex-col min-h-96">
+    <div class="pb-2 border-b">
+        <h2 class="text-xl">ข้อมูลของฉัน</h2>
+        <p>จัดการข้อมูลส่วนตัวคุณเพื่อความปลอดภัยของบัญชีผู้ใช้นี้</p>
+    </div>
+    <div class="flex flex-1 gap-2 py-2">
+        <div class="w-4/5 border-r p-4 flex flex-col">
+            <form [formGroup]="profileFormGroup" class="flex-1 space-y-4">
+                <div class="flex items-center gap-2 w-full">
+                    <p class="min-w-40 flex-shrink-0 text-right">ชื่อผู้ใช้งาน</p>
+                    <mat-form-field class="flex-1">
+                        <input type="text" matInput formControlName="username" />
+                        <mat-error *ngIf="profileFormGroup.get('username')?.errors as errors">
+                            <ng-container *ngIf="errors['required']">ต้องการชื่อผู้ใช้งาน</ng-container>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex items-center gap-2 w-full">
+                    <p class="min-w-40 flex-shrink-0 text-right">อีเมล</p>
+                    <p class="flex-1">{{ profileFormGroup.get('email')!.value }}</p>
+                </div>
+            </form>
+            <div class="flex gap-2 w-full">
+                <p class="min-w-40 flex-shrink-0"></p>
+                <button mat-flat-button color="primary" (click)="submitHandler()"
+                    [disabled]="profileFormGroup.invalid">บันทึก</button>
+            </div>
+        </div>
+        <div class="w-1/5 flex flex-col justify-center items-center">
+            <div class="rounded-full min-h-20 min-w-20 h-20 w-20 border mb-4 overflow-hidden">
+
+                <img *ngIf="file && previewUrl" [src]="previewUrl" alt="Preview" class="h-full w-full object-cover">
+
+                <img *ngIf="!file && profileFormGroup.get('profile_url')?.value"
+                    [src]="profileFormGroup.get('profile_url')?.value | imageUrl" alt="Profile Image"
+                    class="h-full w-full object-cover">
+
+                <div *ngIf="!file && !profileFormGroup.get('profile_url')?.value"
+                    class="h-full w-full bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">No Image</span>
+                </div>
+            </div>
+
+            <input type="file" #fileInput class="hidden" accept="image/jpeg, image/png"
+                (change)="onFileSelected($event)" />
+
+            <button class="mb-2 border py-2 px-4" (click)="fileInput.click()">เลือกรูป</button>
+
+            <span>ขนาดไฟล์สูงสุด: 1MB</span>
+            <span>ไฟล์ที่รองรับ: .JPEG, .PNG</span>
+        </div>
+
+
+    </div>
+</div>

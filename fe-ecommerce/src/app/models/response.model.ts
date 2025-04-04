@@ -12,4 +12,5 @@ export class ResponseModel<T = any> {
   response_ref!: string;
   paginate!: Paginate;
   total_count!: any[];
+  status!: number;
 }

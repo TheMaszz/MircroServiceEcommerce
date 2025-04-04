@@ -49,13 +49,22 @@ export class SignupComponent {
       username: this.signupFormGroup.get('username')?.value,
       password: this.signupFormGroup.get('password')?.value,
     };
-    this.authService.signup(data).subscribe((res: any) => {
-      if (res.response_desc == 'success') {
-        console.log('signup success: ', res);
-        this._router.navigate(["/signin"]);
-      } else {
-        console.error(res.error);
-      }
+
+    this.authService.signup(data).subscribe({
+      next: (response) => {
+        console.log('res: ', response);
+        this._router.navigate(['/signin']);
+      },
+      error: (error) => {
+        console.log('res Error: ', error);
+        if (error.error?.status === 409) {
+          window.alertFail('พบข้อมูลซ้ำ!');
+        } else if (error.status === 401) {
+          window.alertFail('กรุณาเข้าสู่ระบบใหม่!');
+        } else {
+          window.alertFail('เกิดข้อผิดพลาดในสมัคสมาชิก! โปรดลองใหม่อีกครั้งภายหลัง');
+        }
+      },
     });
   }
 }

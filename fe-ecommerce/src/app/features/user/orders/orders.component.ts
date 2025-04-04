@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MaterialModules } from 'app/core/modules/material.module';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 import { OrderService } from 'app/core/services/order.service';
