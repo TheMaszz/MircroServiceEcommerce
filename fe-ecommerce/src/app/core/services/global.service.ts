@@ -44,7 +44,6 @@ export class GlobalService {
   }
 
   alertInfo(message: string) {
-    console.log(`Message: ${message}`);
     this.loadingDialogRef = this.dialog.open(AlertInfoComponent, {
       disableClose: true,
       width: '400px',
@@ -53,7 +52,6 @@ export class GlobalService {
   }
 
   alertSuccess(message: string) {
-    console.log(`Message: ${message}`);
     this.loadingDialogRef = this.dialog.open(AlertSuccessComponent, {
       disableClose: true,
       width: '400px',
@@ -62,7 +60,6 @@ export class GlobalService {
   }
 
   alertFail(message: string) {
-    console.log(`Message: ${message}`);
     this.loadingDialogRef = this.dialog.open(AlertFailComponent, {
       disableClose: true,
       width: '400px',
