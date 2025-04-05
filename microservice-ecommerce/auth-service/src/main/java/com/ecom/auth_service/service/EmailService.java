@@ -34,7 +34,7 @@ public class EmailService extends BaseController {
             throw new EmailException("notfound.template", "template not found");
         }
 
-        String finalLink = "http://localhost:4200/reset-password/" + resetToken;
+        String finalLink = "http://localhost:4200/auth/new-password/" + resetToken;
         html = html.replace("${USERNAME}", username);
         html = html.replace("${NEWPASSWORD_LINK}", finalLink);
 

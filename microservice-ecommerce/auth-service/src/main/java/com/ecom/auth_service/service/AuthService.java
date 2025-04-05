@@ -7,6 +7,7 @@ import com.ecom.auth_service.util.JwtUtil;
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.UserBean;
 import com.ecom.common.controller.BaseController;
+import com.ecom.common.dto.ChangePasswordDTO;
 import com.ecom.common.dto.ResetPasswordDTO;
 import com.ecom.common.dto.UserSigninDTO;
 import com.ecom.common.exception.BaseException;
@@ -125,6 +126,7 @@ public class AuthService extends BaseController {
             user = userRepository.findById(user.getId());
 
             sendResetPasswordEmail(user);
+            res.setData(user.getToken_reset_password());
         } catch (Exception e) {
             this.checkException(e, res);
         }
@@ -170,6 +172,29 @@ public class AuthService extends BaseController {
             user = userRepository.findById(user.getId());
 
             sendResetPasswordEmail(user);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse changePassword(HttpServletRequest req, ChangePasswordDTO changePasswordDTO) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try {
+            String userId = req.getHeader("X-User-Id");
+
+            UserBean user = userRepository.findById(Long.valueOf(userId));
+            if (user == null) {
+                throw new AuthException("not.found.user", "not found user");
+            }
+
+            if (!matchPassword(changePasswordDTO.getOld_password(), user.getPassword())) {
+                throw new AuthException("password.not.match", "Password incorrect");
+            }
+
+            userRepository.changePassword(passwordEncoder.encode(changePasswordDTO.getNew_password()));
+
+
         } catch (Exception e) {
             this.checkException(e, res);
         }

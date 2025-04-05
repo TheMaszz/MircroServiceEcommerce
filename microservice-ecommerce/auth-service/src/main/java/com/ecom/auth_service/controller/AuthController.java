@@ -4,6 +4,7 @@ package com.ecom.auth_service.controller;
 import com.ecom.auth_service.service.AuthService;
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.UserBean;
+import com.ecom.common.dto.ChangePasswordDTO;
 import com.ecom.common.dto.ResetPasswordDTO;
 import com.ecom.common.exception.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +48,12 @@ public class AuthController {
     @PutMapping("/reset-password")
     public ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) throws BaseException {
         ApiResponse res = authService.resetPassword(resetPasswordDTO);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<ApiResponse> changePassword(HttpServletRequest req, @RequestBody ChangePasswordDTO changePasswordDTO) throws BaseException {
+        ApiResponse res = authService.changePassword(req, changePasswordDTO);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -48,12 +48,15 @@ public interface UserRepository {
 
 
     @Select({
-            "SELECT id, email, username, last_login, token_reset_password, token_reset_password_expired ",
+            "SELECT id, email, username, password, last_login, token_reset_password, token_reset_password_expired ",
             "FROM user WHERE id = #{id}"
     })
     public UserBean findById(Long id) throws BaseException;
 
     @Update("UPDATE user SET last_login = now() WHERE id = #{userId}")
     public void updateLastLogin(Long userId) throws BaseException;
+
+    @Update("UPDATE user SET password = #{newPassword}")
+    public void changePassword(String newPassword) throws BaseException;
 
 }
