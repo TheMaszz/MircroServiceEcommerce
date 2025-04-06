@@ -2,12 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterModule,
+} from '@angular/router';
 import { MaterialModules } from 'app/core/modules/material.module';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 import { CartService } from 'app/core/services/cart.service';
 import { ProductService } from 'app/core/services/product.service';
+import { UserService } from 'app/core/services/user.service';
 import { CartGroup, CartItem } from 'app/models/cart.model';
+import { UserModel } from 'app/models/user.model';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -36,7 +43,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private router: Router,
     private route: ActivatedRoute,
-    private cartService: CartService
+    private cartService: CartService,
+    private userService: UserService
   ) {}
 
   private unsubscribe$ = new Subject<void>();
@@ -47,10 +55,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
   filteredOptions$!: Observable<any[]>;
   cartItemCount = 0;
   cartItems: CartItem[] = [];
+  currentUser!: UserModel;
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       this.searchProduct.setValue(params['search'] || '');
+    });
+
+    this.userService.getMyProfile();
+    this.userService.userDetails$.subscribe({
+      next: (response) => {
+        this.currentUser = response!;
+      },
+      error: (error) => {
+        console.log('res Error:', error);
+      },
     });
 
     this.filteredOptions$ = this.searchProduct.valueChanges.pipe(

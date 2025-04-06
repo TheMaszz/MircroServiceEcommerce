@@ -7,6 +7,7 @@ import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
 import { CheckoutCancelComponent } from './checkout-cancel/checkout-cancel.component';
+import { getMyAddress } from '../user/user.resolver';
 
 export const HOME_ROUTES: Routes = [
   {
@@ -23,17 +24,17 @@ export const HOME_ROUTES: Routes = [
       { path: 'carts', component: CartComponent },
       {
         path: 'checkout',
-        component: CheckoutComponent
+        component: CheckoutComponent,
+        resolve: { address: getMyAddress },
       },
       {
         path: 'checkout/success',
-        component: CheckoutSuccessComponent
+        component: CheckoutSuccessComponent,
       },
       {
         path: 'checkout/cancel',
-        component: CheckoutCancelComponent
-      }
-      
+        component: CheckoutCancelComponent,
+      },
     ],
   },
 ];

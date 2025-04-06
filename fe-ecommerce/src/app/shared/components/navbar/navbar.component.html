@@ -55,6 +55,7 @@
                 <mat-icon>account_circle</mat-icon>
             </button>
             <mat-menu #accountMenu="matMenu" xPosition="before">
+                <span *ngIf="currentUser.role === 2" mat-menu-item routerLink="/seller">ร้านของฉัน</span>
                 <span mat-menu-item routerLink="/user/account/profile">บัญชีของฉัน</span>
                 <span mat-menu-item routerLink="/user/orders">การซื้อของฉัน</span>
                 <button mat-menu-item (click)="logout()">ออกจากระบบ</button>

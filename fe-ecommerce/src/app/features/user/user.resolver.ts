@@ -26,3 +26,10 @@ export const getMyProfile: ResolveFn<any> = (
 ): Observable<any> => {
   return inject(UserService).getMyProfile();
 };
+
+export const getMyAddress: ResolveFn<any> = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+): Observable<any> => {
+  return inject(UserService).getMyAddress();
+};

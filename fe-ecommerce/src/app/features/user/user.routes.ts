@@ -3,7 +3,7 @@ import { UserComponent } from './user.component';
 import { AccountComponent } from './account/account.component';
 import { OrdersComponent } from './orders/orders.component';
 import { OrderComponent } from './order/order.component';
-import { getMyProfile, getOrderById } from './user.resolver';
+import { getMyAddress, getMyProfile, getOrderById } from './user.resolver';
 import { AddressComponent } from './account/address/address.component';
 import { ChangePasswordComponent } from './account/change-password/change-password.component';
 import { ProfileComponent } from './account/profile/profile.component';
@@ -18,7 +18,7 @@ export const USER_ROUTES: Routes = [
         path: 'account',
         component: AccountComponent,
         children: [
-          { path: '', redirectTo: 'profile', pathMatch: 'full' }, 
+          { path: '', redirectTo: 'profile', pathMatch: 'full' },
           {
             path: 'profile',
             component: ProfileComponent,
@@ -27,10 +27,12 @@ export const USER_ROUTES: Routes = [
           {
             path: 'address',
             component: AddressComponent,
+            resolve: { address: getMyAddress },
           },
           {
             path: 'change-password',
             component: ChangePasswordComponent,
+            resolve: { profile: getMyProfile },
           },
         ],
       },

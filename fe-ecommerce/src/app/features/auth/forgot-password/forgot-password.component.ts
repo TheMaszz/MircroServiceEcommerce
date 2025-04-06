@@ -38,8 +38,7 @@ export class ForgotPasswordComponent implements OnInit {
     this.location.back();
   }
 
-  submitHandler(){
-    
+  submitHandler() {
     const data = this.forgotPassFormGroup.getRawValue();
 
     this.authService.sendTokenResetPassword(data).subscribe({
@@ -47,7 +46,6 @@ export class ForgotPasswordComponent implements OnInit {
         console.log('res: ', response);
         this.sended = true;
         this.token = response.data;
-        // this.router.navigate(['/new-password']);
       },
       error: (error) => {
         console.log('res Error: ', error);
@@ -55,15 +53,17 @@ export class ForgotPasswordComponent implements OnInit {
     });
   }
 
-  resendEmail(){
-    // this.authService.resendTokenResetPassword().subscribe({
-    //   next: (response) => {
-    //     console.log('res: ', response);
-    //   },
-    //   error: (error) =>{
-    //     console.log("res Error: ", error);
-        
-    //   }
-    // })
+  resendEmail() {
+    const data = this.forgotPassFormGroup.getRawValue();
+
+    this.authService.resendTokenResetPassword(data).subscribe({
+      next: (response) => {
+        console.log('res: ', response);
+        window.alertSuccess('ส่งใหม่เรียบร้อย');
+      },
+      error: (error) => {
+        console.log('res Error: ', error);
+      },
+    });
   }
 }

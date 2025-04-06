@@ -13,7 +13,7 @@ export interface UserModel {
   username: string;
   email: string;
   profile_url: string;
-  role: string;
+  role: number;
   created_at: string;
   updated_at: string;
   last_login: string;

@@ -13,25 +13,26 @@ import { ModalAddressComponent } from './components/modal-address/modal-address.
   templateUrl: './address.component.html',
 })
 export class AddressComponent implements OnInit {
-  constructor(private userService: UserService, private dialog: MatDialog) {}
+  constructor(
+    private userService: UserService, 
+    private dialog: MatDialog
+  ) {}
 
   addressList: Address[] = [];
 
   ngOnInit(): void {
-    this.fetchMyAddress();
-  }
-
-  fetchMyAddress() {
-    this.userService.getMyAddress().subscribe({
+    this.userService.myAddress$.subscribe({
       next: (response) => {
         console.log('res: ', response);
-        this.addressList = response.data;
+        this.addressList = response!;
       },
       error: (error) => {
         console.log('res Error: ', error);
       },
     });
   }
+
+
 
   trackByAddressId(index: number, address: Address): number {
     return address.id;
@@ -47,7 +48,7 @@ export class AddressComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((data) => {
-        this.fetchMyAddress();
+        this.userService.refreshAddress();
       });
   }
 
@@ -63,7 +64,7 @@ export class AddressComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((data) => {
-        this.fetchMyAddress();
+        this.userService.refreshAddress();
       });
   }
 
@@ -78,7 +79,7 @@ export class AddressComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((data) => {
-        this.fetchMyAddress();
+        this.userService.refreshAddress();
       });
   }
 
@@ -86,7 +87,7 @@ export class AddressComponent implements OnInit {
     this.userService.defaultAddress(id).subscribe({
       next: (response) => {
         console.log('res: ', response);
-        this.fetchMyAddress();
+        this.userService.refreshAddress();
       },
       error: (error) => {
         console.log('res Error: ', error);

@@ -36,10 +36,10 @@ export class ChangePasswordComponent implements OnInit {
   profile!: UserModel;
 
   ngOnInit(): void {
-    this.userService.getMyProfile().subscribe({
+    this.userService.userDetails$.subscribe({
       next: (response) => {
         console.log('res: ', response);
-        this.profile = response.data;
+        this.profile = response!;
       },
       error: (error) => {
         console.log('res Error: ', error);

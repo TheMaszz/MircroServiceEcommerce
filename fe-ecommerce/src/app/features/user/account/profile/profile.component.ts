@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MaterialModules } from 'app/core/modules/material.module';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
@@ -13,10 +18,8 @@ import { UserService } from 'app/core/services/user.service';
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
-
   constructor(
     private _formBuilder: FormBuilder,
-    private activatedRoute: ActivatedRoute,
     private userService: UserService
   ) {
     this.profileFormGroup = this._formBuilder.group({
@@ -32,13 +35,18 @@ export class ProfileComponent implements OnInit {
   profileFormGroup: FormGroup;
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ profile }) => {
-      this.profileFormGroup.patchValue({
-        id: profile.data.id,
-        username: profile.data.username,
-        email: profile.data.email,
-        profile_url: profile.data.profile_url,
-      });
+    this.userService.userDetails$.subscribe({
+      next: (response) => {
+        this.profileFormGroup.patchValue({
+          id: response!.id,
+          username: response!.username,
+          email: response!.email,
+          profile_url: response!.profile_url,
+        });
+      },
+      error: (error) => {
+        console.log('res Error: ', error);
+      },
     });
     console.log('profile: ', this.profileFormGroup.getRawValue());
   }
@@ -90,5 +98,4 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
-
 }

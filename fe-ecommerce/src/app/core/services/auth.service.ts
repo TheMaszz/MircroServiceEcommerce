@@ -38,7 +38,7 @@ export class AuthService {
     );
   }
 
-  resendTokenResetPassword(data: ResetPassRequest): Observable<ResponseModel> {
+  resendTokenResetPassword(data: ForgotPassRequest): Observable<ResponseModel> {
     return this.http.post<ResponseModel>(
       `${environment.apiUrl}/${this.serviceUrl}/resend-token-reset-password`,
       data

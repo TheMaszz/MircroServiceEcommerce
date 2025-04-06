@@ -52,9 +52,8 @@ export class CheckoutComponent implements OnInit {
     if (this.selectedItems.length === 0) {
       this.location.back();
     } else {
-      this.userService.getMyAddress().subscribe((res) => {
-        console.log(res.data);
-        this.myAddress = res.data;
+      this.userService.myAddress$.subscribe((response) => {
+        this.myAddress = response!;
         this.selectedAddress = this.myAddress[0];
         console.log('my address: ', this.myAddress);
         window.closeLoading();

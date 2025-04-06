@@ -22,10 +22,11 @@ export interface ForgotPassRequest {
 
 export interface ResetPassRequest {
   token_reset_password: string;
-  new_password?: string;
+  new_password: string;
 }
 
 export interface ChangePasswordRequest {
   old_password: string;
   new_password: string;
 }
+
