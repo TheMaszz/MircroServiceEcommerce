@@ -86,6 +86,7 @@ public class AuthService extends BaseController {
             dto.setId(user.getId());
             dto.setUsername(user.getUsername());
             dto.setEmail(user.getEmail());
+            dto.setRole(user.getRole());
             res.setData(dto);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -156,10 +157,10 @@ public class AuthService extends BaseController {
         return res;
     }
 
-    public ApiResponse resendTokenResetPassword(ResetPasswordDTO resetPasswordDTO) throws BaseException {
+    public ApiResponse resendTokenResetPassword(UserBean userBean) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {
-            UserBean user = userRepository.findUserByTokenResetPassword(resetPasswordDTO.getToken_reset_password());
+            UserBean user = userRepository.findByEmail(userBean.getEmail());
             if (user == null) {
                 throw new AuthException("not.found.user", "not found user");
             }
@@ -229,6 +230,7 @@ public class AuthService extends BaseController {
         return switch (role) {
             case 0 -> "ADMIN";
             case 1 -> "USER";
+            case 2 -> "SELLER";
             default -> "INVALID";
         };
     }

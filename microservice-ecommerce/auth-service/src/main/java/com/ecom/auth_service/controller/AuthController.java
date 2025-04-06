@@ -58,8 +58,8 @@ public class AuthController {
     }
 
     @PostMapping("/resend-token-reset-password")
-    public ResponseEntity<ApiResponse> resendTokenResetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) throws BaseException {
-        ApiResponse res = authService.resendTokenResetPassword(resetPasswordDTO);
+    public ResponseEntity<ApiResponse> resendTokenResetPassword(@RequestBody UserBean userBean) throws BaseException {
+        ApiResponse res = authService.resendTokenResetPassword(userBean);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
