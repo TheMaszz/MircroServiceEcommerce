@@ -53,7 +53,7 @@ export class SignupComponent {
     this.authService.signup(data).subscribe({
       next: (response) => {
         console.log('res: ', response);
-        this._router.navigate(['/signin']);
+        this._router.navigate(['/auth/signin']);
       },
       error: (error) => {
         console.log('res Error: ', error);

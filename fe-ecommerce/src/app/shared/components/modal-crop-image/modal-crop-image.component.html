@@ -1,0 +1,26 @@
+<div class="min-h-[600px] h-full w-full flex flex-col overflow-hidden">
+  <!-- Cropper Section -->
+  <div
+    class="flex-1 flex justify-center items-center bg-[rgba(0,0,0,0.7)] overflow-hidden">
+    <image-cropper
+      class="w-full h-full max-h-[100%] max-w-[100%] object-contain"
+      [imageBase64]="imageBase64"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="4 / 3"
+      format="png"
+      (imageCropped)="imageCropped($event)"
+      (imageLoaded)="imageLoaded()"
+      (cropperReady)="cropperReady()"
+      (loadImageFailed)="loadImageFailed()"
+      backgroundColor="black"
+    ></image-cropper>
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex gap-2 items-center justify-end p-4">
+    <button mat-stroked-button (click)="onCancel()">ยกเลิก</button>
+    <button mat-flat-button color="primary" cdkFocusInitial (click)="onCrop()">
+      ยืนยัน
+    </button>
+  </div>
+</div>

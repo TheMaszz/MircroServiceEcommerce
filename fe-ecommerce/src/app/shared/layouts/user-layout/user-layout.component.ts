@@ -3,7 +3,17 @@ import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/rout
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { MaterialModules } from 'app/core/modules/material.module';
 import { CommonModule } from '@angular/common';
-
+interface NavChild {
+  path: string;
+  text: string;
+}
+interface NavSide {
+  path: string;
+  icon: string;
+  text: string;
+  isOpen?: boolean;
+  children?: NavChild[];
+}
 @Component({
   selector: 'app-user-layout',
   standalone: true,
@@ -26,8 +36,9 @@ export class UserLayoutComponent {
     });
   }
 
-  navSide = [
+  navSide: NavSide[] = [
     {
+      path: '/user/account',
       icon: 'person',
       text: 'บัญชีของฉัน',
       isOpen: false, 
@@ -44,7 +55,7 @@ export class UserLayoutComponent {
     },
   ];
 
-  toggleDropdown(nav: any) {
+  toggleDropdown(nav: NavSide) {
     if (nav.children) {
       nav.isOpen = !nav.isOpen;
     }

@@ -21,7 +21,10 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   signup(data: SignUpRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.serviceUrl}/signup`, data);
+    return this.http.post<AuthResponse>(
+      `${environment.apiUrl}/${this.serviceUrl}/signup`, 
+      data
+    );
   }
 
   signin(data: SignInRequest): Observable<AuthResponse> {

@@ -3,6 +3,7 @@ import { AuthLayoutComponent } from './shared/layouts/auth-layout/auth-layout.co
 import { MainLayoutComponent } from './shared/layouts/main-layout/main-layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { UserLayoutComponent } from './shared/layouts/user-layout/user-layout.component';
+import { SellerLayoutComponent } from './shared/layouts/seller-layout/seller-layout.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./features/user/user.routes').then((m) => m.USER_ROUTES),
+  },
+  {
+    path: 'seller',
+    component: SellerLayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./features/seller/seller.routes').then((m) => m.SELLER_ROUTES),
   },
 
 ];

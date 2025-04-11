@@ -62,7 +62,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.searchProduct.setValue(params['search'] || '');
     });
 
-    this.userService.getMyProfile();
+    this.userService.getMyProfile().subscribe();
     this.userService.userDetails$.subscribe({
       next: (response) => {
         this.currentUser = response!;

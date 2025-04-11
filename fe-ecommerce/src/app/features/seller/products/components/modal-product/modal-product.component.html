@@ -1,0 +1,149 @@
+<div class="p-4">
+  <h2 class="mb-4 text-xl">
+    {{
+      data.condition === "create"
+        ? "สร้างสินค้าใหม่"
+        : data.condition === "update"
+        ? "แก้ไขสินค้า"
+        : "ลบสินค้า"
+    }}
+  </h2>
+
+  <ng-container
+    *ngIf="data.condition === 'create' || data.condition === 'update'"
+  >
+    <form [formGroup]="productFormGroup" class="grid grid-cols-2 gap-4">
+      <mat-form-field class="w-full col-span-2">
+        <mat-label>ชื่อสินค้า</mat-label>
+        <input matInput formControlName="name" required />
+        <mat-error
+          *ngIf="
+            productFormGroup.get('name')?.hasError('required') &&
+            productFormGroup.get('name')?.touched
+          "
+        >
+          กรุณากรอกชื่อสินค้า
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>ราคา</mat-label>
+        <input matInput formControlName="price" required type="number" />
+        <mat-error
+          *ngIf="
+            productFormGroup.get('price')?.hasError('required') &&
+            productFormGroup.get('price')?.touched
+          "
+        >
+          กรุณากรอกราคา
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>จำนวนสินค้า</mat-label>
+        <input matInput formControlName="qty" required type="number" />
+        <mat-error
+          *ngIf="
+            productFormGroup.get('price')?.hasError('required') &&
+            productFormGroup.get('price')?.touched
+          "
+        >
+          กรุณากรอกจำนวนสินค้า
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full col-span-2">
+        <mat-label>รายละเอียด</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+
+      <!-- image inputs -->
+      <div
+        class="col-span-2 rounded-md p-4 border-2 flex items-center justify-center flex-col"
+        [ngClass]="{
+          'border-primary-500 text-primary-500': isDragging,
+          'border-gray-400 text-gray-500': !isDragging
+        }"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <mat-icon>upload</mat-icon>
+        <p>อัปโหลดรูปภาพสินค้า</p>
+        <p>รองรับไฟล์ .jpg, .png, .jpeg สูงสุด</p>
+        <input
+          type="file"
+          multiple
+          hidden
+          #fileInput
+          accept=".jpg, .png, .jpeg"
+          (change)="onFileChange($event)"
+        />
+        <button type="button" (click)="fileInput.click()">เลือกไฟล์</button>
+      </div>
+    </form>
+
+    <!-- images preview -->
+    <div
+      *ngIf="images.length > 0"
+      class="grid grid-cols-5 gap-2 mt-4"
+      cdkDropList
+      (cdkDropListDropped)="drop($event)"
+    >
+      <div
+        *ngFor="let image of images; let i = index"
+        class="relative h-32 border-2 border-gray-300 rounded-lg overflow-hidden"
+        cdkDrag
+      >
+        <img
+          [src]="
+            image.id !== null ? (image.image_url | imageUrl) : image.image_url"
+          class="w-full h-full object-cover"
+        />
+
+        <button
+          class="absolute top-1 right-1 p-1 bg-red-500 rounded-lg text-white flex items-center justify-center"
+          (click)="removeImage(i)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button
+          class="absolute top-12 right-1 p-1 bg-primary-500 rounded-lg text-white flex items-center justify-center"
+          (click)="editImage(i)"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="w-full text-right text-sm text-red-500">
+      *สูงสุด {{ images.length }}/5
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="data.condition === 'delete'">
+    <div class="flex items-center gap-2 mt-4">
+      <img
+        [src]="data.product!.product_image[0]!.image_url | imageUrl"
+        alt="Product Image"
+        class="w-32 h-32 object-cover rounded-md"
+      />
+      <div class="flex flex-col gap-2">
+        <h3 class="text-lg font-semibold">{{ data.product!.name }}</h3>
+        <p>ราคา: {{ data.product!.price | currency:'THB':'symbol':'1.0-0' }}</p>
+        <p>จำนวน: {{ data.product!.qty }}</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="flex gap-2 w-full items-center justify-end mt-4">
+    <button mat-stroked-button (click)="closeHandler()">ยกเลิก</button>
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="productFormGroup.invalid && this.data.condition != 'delete'"
+      (click)="submitHandler()"
+    >
+      ยืนยัน
+    </button>
+  </div>
+</div>
