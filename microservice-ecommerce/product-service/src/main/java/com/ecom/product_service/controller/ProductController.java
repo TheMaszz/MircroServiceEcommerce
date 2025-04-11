@@ -65,8 +65,6 @@ public class ProductController {
             @RequestPart("product") String productJson,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) throws BaseException, JsonProcessingException {
-        String userId = request.getHeader("X-User-Id");
-
         ObjectMapper objectMapper = new ObjectMapper();
         ProductBean productBean = objectMapper.readValue(productJson, ProductBean.class);
 
@@ -100,6 +98,19 @@ public class ProductController {
             @RequestBody Long qty
     ) throws BaseException {
         ApiResponse res = productService.updateQty(id, qty);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/getMyProducts")
+    public ResponseEntity<ApiResponse> getMyProducts(
+            HttpServletRequest request,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "page_number", required = false) int page_number,
+            @RequestParam(name = "page_size", required = false) int page_size,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "sort_type", required = false) String sort_type
+    ) throws BaseException {
+        ApiResponse res = productService.getMyProducts(request, search, page_number, page_size, sort, sort_type);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

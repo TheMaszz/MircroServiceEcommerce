@@ -80,7 +80,8 @@ public class ProductService extends BaseController {
             String role = request.getHeader("X-Role");
             productBean.setCreated_by(Long.valueOf(userId));
 
-            if (!role.equals("ADMIN")) {
+            Set<String> allowedRoles = Set.of("ADMIN", "SELLER");
+            if (!allowedRoles.contains(role)) {
                 throw new ProductException("no.permission.create", "you no permission to create");
             }
 
@@ -133,9 +134,10 @@ public class ProductService extends BaseController {
 
             String userId = request.getHeader("X-User-Id");
             String role = request.getHeader("X-Role");
-            productBean.setCreated_by(Long.valueOf(userId));
+            productBean.setUpdated_by(Long.valueOf(userId));
 
-            if (!role.equals("ADMIN")) {
+            Set<String> allowedRoles = Set.of("ADMIN", "SELLER");
+            if (!allowedRoles.contains(role)) {
                 throw new ProductException("no.permission.update", "you no permission to update");
             }
 
@@ -216,9 +218,9 @@ public class ProductService extends BaseController {
             String userId = request.getHeader("X-User-Id");
             String role = request.getHeader("X-Role");
 
-
-            if (!role.equals("ADMIN")) {
-                throw new ProductException("no.permission.update", "you no permission to update");
+            Set<String> allowedRoles = Set.of("ADMIN", "SELLER");
+            if (!allowedRoles.contains(role)) {
+                throw new ProductException("no.permission.delete", "you no permission to delete");
             }
 
             fileStorageService.deleteFolder("products", id);
@@ -233,9 +235,9 @@ public class ProductService extends BaseController {
     public ApiResponse getAutoComplete(String search, Long limit) throws BaseException {
         ApiResponse res = new ApiResponse();
         HashMap<String, Object> params = new HashMap<>();
-        try{
+        try {
             params.put("search", search);
-            if(limit != null){
+            if (limit != null) {
                 params.put("limit", limit);
             }
             List<ProductSearchDTO> autoComplete = productRepository.findAutoCompleteProduct(params);
@@ -246,9 +248,9 @@ public class ProductService extends BaseController {
         return res;
     }
 
-    public ApiResponse updateQty(Long id, Long qty) throws BaseException{
+    public ApiResponse updateQty(Long id, Long qty) throws BaseException {
         ApiResponse res = new ApiResponse();
-        try{
+        try {
             ProductBean product = productRepository.findProductById(id);
             if (product == null) {
                 throw new ProductException("not.found", "product not found");
@@ -262,6 +264,41 @@ public class ProductService extends BaseController {
         return res;
     }
 
+    public ApiResponse getMyProducts(
+            HttpServletRequest request, String search,
+            int page_number,
+            int page_size,
+            String sort,
+            String sort_type) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+
+            Set<String> allowedRoles = Set.of("ADMIN", "SELLER");
+            if (!allowedRoles.contains(role)) {
+                throw new ProductException("no.permission.get.products", "you no permission to get products");
+            }
+
+            if (search != null && !search.isEmpty()) {
+                params.put("search", search);
+            }
+            this.pagination(page_number, page_size, sort, sort_type, params);
+            params.put("isCount", false);
+            List<ProductBean> products = productRepository.findProductsByUserId(Long.valueOf(userId), params);
+            params.put("isCount", true);
+            List<ProductBean> productsCount = productRepository.findProductsByUserId(Long.valueOf(userId), params);
+            res.getPaginate().setLimit(page_size);
+            res.getPaginate().setPage(page_number);
+            res.getPaginate().setTotal(productsCount.size());
+
+            res.setData(products);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
 
 
 }

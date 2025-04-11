@@ -3,7 +3,7 @@ package com.ecom.product_service.repository;
 import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
 import com.ecom.common.dto.ProductSearchDTO;
-import com.thoughtworks.xstream.core.BaseException;
+import com.ecom.common.exception.BaseException;
 import org.apache.ibatis.annotations.*;
 
 import java.util.HashMap;
@@ -106,6 +106,7 @@ public interface ProductRepository {
             "name = #{name},",
             "description = #{description},",
             "qty = #{qty},",
+            "price= #{price},",
             "updated_at = now(),",
             "updated_by = #{updated_by}",
             "WHERE id = #{id}"
@@ -156,5 +157,49 @@ public interface ProductRepository {
             "WHERE id = #{id}"
     })
     public void updateQty(@Param("id") Long id, @Param("currentQty") Long currentQty) throws BaseException;
+
+    @Select({
+            "<script>",
+            "SELECT",
+            " p.id,",
+            " p.name,",
+            " p.description,",
+            " p.qty,",
+            " p.price,",
+            " p.created_at,",
+            " p.updated_at,",
+            " p.created_by,",
+            " p.updated_by,",
+            " u.username AS created_user,",
+            " u2.username AS updated_user",
+            "FROM product AS p",
+            "LEFT JOIN user AS u ON p.created_by = u.id",
+            "LEFT JOIN user AS u2 ON p.updated_by = u2.id",
+            "WHERE 1=1 AND p.created_by = #{userId}",
+            "<if test='params.search != null and params.search != \"\"'>",
+            " AND p.name LIKE CONCAT('%', #{params.search}, '%')",
+            "</if>",
+            "<if test='params.isCount == false'>",
+            " Order by ${params.sorting} ${params.sort_type} limit #{params.start}, #{params.end}",
+            "</if>",
+            "</script>"
+    })
+    @Results(
+            id = "MyProductResultMap",
+            value = {
+                    @Result(property = "id", column = "id"),
+                    @Result(property = "name", column = "name"),
+                    @Result(property = "description", column = "description"),
+                    @Result(property = "qty", column = "qty"),
+                    @Result(property = "price", column = "price"),
+                    @Result(property = "created_at", column = "created_at"),
+                    @Result(property = "updated_at", column = "updated_at"),
+                    @Result(property = "created_by", column = "created_by"),
+                    @Result(property = "updated_by", column = "updated_by"),
+                    @Result(property = "product_image", column = "id",
+                            many = @Many(select = "findProductImageByProductId"))
+            }
+    )
+    public List<ProductBean> findProductsByUserId(@Param("userId") Long userId, @Param("params") HashMap<String, Object> params) throws BaseException;
 
 }

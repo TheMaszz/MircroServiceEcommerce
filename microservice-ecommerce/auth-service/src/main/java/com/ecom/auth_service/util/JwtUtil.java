@@ -13,7 +13,7 @@ import java.util.UUID;
 @Component
 public class JwtUtil {
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60;
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 hr
     private final Key key;
 
     public JwtUtil(@Value("${app.security.secret-key}") String secretKey){
