@@ -114,4 +114,19 @@ public class ProductController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @GetMapping("/getShopProducts/{userId}")
+    public ResponseEntity<ApiResponse> getShopProducts(
+            @PathVariable Long userId,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "page_number", required = false) int page_number,
+            @RequestParam(name = "page_size", required = false) int page_size,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "sort_type", required = false) String sort_type
+    ) throws BaseException {
+        ApiResponse res = productService.getShopProductsByUserId(userId, search, page_number, page_size, sort, sort_type);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+
+
 }

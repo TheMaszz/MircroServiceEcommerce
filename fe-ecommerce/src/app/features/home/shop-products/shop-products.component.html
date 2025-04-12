@@ -1,0 +1,75 @@
+<!-- seller detail -->
+<div class="p-4 bg-white mt-4 border flex justify-between items-start">
+  <div class="flex gap-4 items-center">
+    <div *ngIf="shopDetail.profile_url" class="h-16 w-16 rounded-full">
+      <img
+        [src]="shopDetail.profile_url | imageUrl"
+        alt="Seller Image"
+        class="w-full h-full rounded-full object-cover"
+      />
+    </div>
+    <div
+      *ngIf="!shopDetail.profile_url"
+      class="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center"
+    >
+      <span class="text-gray-500 text-center">No Image</span>
+    </div>
+    <div>
+      <p class="font-semibold">{{ shopDetail.username }}</p>
+    </div>
+  </div>
+  <div>
+    <p class="text-gray-500 mt-2 text-right">
+      สินค้าทั้งหมด {{ shopDetail.count_products }} ชิ้น
+    </p>
+    <p class="text-gray-500 mt-2 inline text-right">
+      เข้าสู่ระบบล่าสุด {{ shopDetail.last_login | date : "short" }}
+    </p>
+  </div>
+</div>
+
+<!-- search section -->
+<div class="flex gap-4 mt-4">
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchTermChange($event)"
+    placeholder="ค้นหาสินค้าภายในร้านค้า"
+    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-500"
+  />
+  <button
+    (click)="onClearSearch()"
+    class="text-nowrap bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 transition duration-200"
+  >
+    ล้างตัวกรอง
+  </button>
+  <button
+    (click)="onSearch()"
+    class="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition duration-200"
+  >
+    ค้นหา
+  </button>
+</div>
+
+<!-- products section -->
+<div class="my-4 w-full">
+  <div
+    class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+  >
+    <ng-container *ngFor="let product of products">
+      <app-product-card
+        [id]="product.id"
+        [name]="product.name"
+        [price]="product.price"
+        [imgUrl]="product.product_image[0].image_url"
+      />
+    </ng-container>
+  </div>
+  <ng-container *ngIf="products.length > 0">
+    <app-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChanged)="onPageChanged($event)"
+    />
+  </ng-container>
+</div>

@@ -130,4 +130,33 @@ export class ProductService {
         })
       );
   }
+
+  getShopProductsByUserId(
+    userId: number,
+    params: {
+      search?: string;
+      page_number?: number;
+      page_size?: number;
+      sort?: string;
+      sort_type?: 'asc' | 'desc';
+    } = {
+      search: '',
+      page_number: 1,
+      page_size: 10,
+      sort: 'created_at',
+      sort_type: 'desc',
+    }
+  ): Observable<ResponseModel> {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        httpParams = httpParams.set(key, String(value));
+      }
+    });
+
+    return this.http.get<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/getShopProducts/${userId}`,
+      { params: httpParams }
+    );
+  }
 }

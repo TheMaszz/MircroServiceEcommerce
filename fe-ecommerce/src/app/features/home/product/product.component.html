@@ -76,6 +76,7 @@
   </div>
 </div>
 
+<!-- seller detail -->
 <div class="p-4 bg-white mt-4 border flex justify-between items-start">
   <div class="flex gap-4 items-center">
     <div *ngIf="shopDetail.profile_url" class="h-16 w-16 rounded-full">
@@ -103,11 +104,11 @@
     </div>
   </div>
   <div>
-    <p class="text-gray-500 mt-2">
+    <p class="text-gray-500 mt-2 text-right">
       สินค้าทั้งหมด {{ shopDetail.count_products }} ชิ้น
     </p>
-    <p class="text-gray-500 mt-2 inline">
-      {{ shopDetail.last_login | date : "short" }}
+    <p class="text-gray-500 mt-2 inline text-right">
+      เข้าสู่ระบบล่าสุด {{ shopDetail.last_login | date : "short" }}
     </p>
   </div>
 </div>

@@ -311,5 +311,44 @@ public class ProductService extends BaseController {
         return res;
     }
 
+    public ApiResponse getShopProductsByUserId(
+            Long userId,
+            String search,
+            int page_number,
+            int page_size,
+            String sort,
+            String sort_type
+    ) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            if (search != null && !search.isEmpty()) {
+                params.put("search", search);
+            }
+            params.put("userId", userId);
+            this.pagination(page_number, page_size, sort, sort_type, params);
+            params.put("isCount", false);
+            List<ProductBean> products = productRepository.findShopProducts(params);
+            params.put("isCount", true);
+            List<ProductBean> productsCount = productRepository.findShopProducts(params);
+            res.getPaginate().setLimit(page_size);
+            res.getPaginate().setPage(page_number);
+            res.getPaginate().setTotal(productsCount.size());
+
+            ShopDetailDTO shopDetailDTO = productRepository.findShopDetail(userId);
+            if(shopDetailDTO == null){
+                throw new ProductException("not.found.shop.detail", "shop detail not found");
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("products", products);
+            result.put("shopDetail", shopDetailDTO);
+
+            res.setData(result);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
 
 }
