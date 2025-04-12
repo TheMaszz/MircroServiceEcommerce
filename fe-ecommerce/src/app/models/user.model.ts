@@ -18,3 +18,11 @@ export interface UserModel {
   updated_at: string;
   last_login: string;
 }
+
+export interface ShopDetail {
+  count_products: number;
+  id: number;
+  username: string;
+  profile_url: string;
+  last_login: string;
+}

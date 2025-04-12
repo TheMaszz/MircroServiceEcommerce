@@ -83,11 +83,10 @@
       <div class="text-right mt-4">
         <button
           *ngIf="order.stage === 'Delivered'"
-          mat-stroked-button
-          class="mr-2 "
+          class="flex items-center gap-2 mr-2 px-4 py-2 border-2 border-primary-500 bg-primary-50 text-primary-500 rounded-lg hover:bg-primary-100"
           (click)="confirmDelivery(order.id)"
-          color="primary"
         >
+          <mat-icon>check_circle</mat-icon>
           ยืนยันรับสินค้า
         </button>
         <button

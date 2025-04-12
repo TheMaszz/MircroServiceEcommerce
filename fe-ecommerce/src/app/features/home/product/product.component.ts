@@ -9,17 +9,18 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { MaterialModules } from 'app/core/modules/material.module';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 import { CartService } from 'app/core/services/cart.service';
 import { Subject } from 'rxjs';
 import { ProductModel } from 'app/models/product.model';
 import { CartItem } from 'app/models/cart.model';
+import { ShopDetail } from 'app/models/user.model';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [MaterialModules, CommonModule, ImageUrlPipe],
+  imports: [MaterialModules, CommonModule, ImageUrlPipe, RouterModule],
   templateUrl: './product.component.html',
 })
 export class ProductComponent implements OnInit, OnDestroy {
@@ -38,12 +39,13 @@ export class ProductComponent implements OnInit, OnDestroy {
   currentIndex = 0;
   quantity = 1;
   product!: ProductModel;
+  shopDetail!: ShopDetail;
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ product }) => {
-      this.product = product.data;
+      this.product = product.data.product;
+      this.shopDetail = product.data.shopDetail;
     });
-    console.log('product: ', this.product);
   }
 
   ngOnDestroy(): void {

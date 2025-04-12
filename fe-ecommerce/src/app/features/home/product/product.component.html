@@ -1,65 +1,113 @@
 <div class="flex w-full p-4 bg-white mt-4 border">
-    <!-- Product Image Section -->
-    <div class="w-[40%] flex flex-col">
-        <button mat-icon-button (click)="backNavigate()">
-            <mat-icon>arrow_back</mat-icon>
-        </button>
-        <div class="relative flex justify-center items-center p-2 w-full">
-            <img [src]="product.product_image[currentIndex].image_url | imageUrl" alt="Product Image"
-                class="w-[450px] h-[450px] max-h-[450px] max-w-[450px] rounded-lg">
+  <!-- Product Image Section -->
+  <div class="w-[40%] flex flex-col">
+    <button mat-icon-button (click)="backNavigate()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="relative flex justify-center items-center p-2 w-full">
+      <img
+        [src]="product.product_image[currentIndex].image_url | imageUrl"
+        alt="Product Image"
+        class="w-[450px] h-[450px] max-h-[450px] max-w-[450px] rounded-lg"
+      />
 
-            <button class="absolute top-1/2 left-2 transform -translate-y-1/2 w-10 h-10 
-                flex items-center justify-center bg-white p-2 rounded-full shadow-lg" (click)="prevHandler()">
-                <mat-icon>arrow_back_ios</mat-icon>
-            </button>
+      <button
+        class="absolute top-1/2 left-2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white p-2 rounded-full shadow-lg"
+        (click)="prevHandler()"
+      >
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
 
-            <button class="absolute top-1/2 right-2 transform -translate-y-1/2 w-10 h-10 
-                flex items-center justify-center bg-white p-2 rounded-full shadow-lg" (click)="nextHandler()">
-                <mat-icon>arrow_forward_ios</mat-icon>
-            </button>
-        </div>
-
-        <div #thumbnailContainer class="overflow-x-auto flex gap-2 mt-2">
-            <ng-container *ngFor="let image of product.product_image; let i = index">
-                <img #thumbnailItem [src]="image.image_url | imageUrl" alt="Thumbnail"
-                    [ngClass]="{ 'border-2 border-red-500': i === currentIndex }"
-                    class="w-[82px] h-[82px] border rounded-lg cursor-pointer" (click)="indexHandler(i)">
-            </ng-container>
-        </div>
-
+      <button
+        class="absolute top-1/2 right-2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white p-2 rounded-full shadow-lg"
+        (click)="nextHandler()"
+      >
+        <mat-icon>arrow_forward_ios</mat-icon>
+      </button>
     </div>
 
-    <!-- Product Info Section -->
-    <div class="w-[60%] p-4">
-        <h2 class="text-2xl font-bold mb-2">{{ product.name }}</h2>
-        <p class="">รายละเอียด:</p>
-        <p class="text-gray-500 mt-2 inline">{{ product.description }}</p>
-        <p class="text-xl font-semibold mt-4">{{ product.price | currency:'THB':'symbol':'1.0-0' }}</p>
+    <div #thumbnailContainer class="overflow-x-auto flex gap-2 mt-2">
+      <ng-container *ngFor="let image of product.product_image; let i = index">
+        <img
+          #thumbnailItem
+          [src]="image.image_url | imageUrl"
+          alt="Thumbnail"
+          [ngClass]="{ 'border-2 border-red-500': i === currentIndex }"
+          class="w-[82px] h-[82px] border rounded-lg cursor-pointer"
+          (click)="indexHandler(i)"
+        />
+      </ng-container>
+    </div>
+  </div>
 
-        <div class="flex mt-4  gap-2 items-end">
-            <div class="grid grid-cols-3 gap-2 border  w-48">
-                <button class="border-r" (click)="quantityHandler('minus')">-</button>
-                <span class="text-center">{{ quantity }}</span>
-                <button class="border-l" (click)="quantityHandler('plus')">+</button>
-            </div>
-            <span class="text-gray-300 text-sm">คงเหลือ {{ product.qty }}</span>
-        </div>
+  <!-- Product Info Section -->
+  <div class="w-[60%] p-4">
+    <h2 class="text-2xl font-bold mb-2">{{ product.name }}</h2>
+    <p class="">รายละเอียด:</p>
+    <p class="text-gray-500 mt-2 inline">{{ product.description }}</p>
+    <p class="text-xl font-semibold mt-4">
+      {{ product.price | currency : "THB" : "symbol" : "1.0-0" }}
+    </p>
 
-
-        <div class="flex gap-2 mt-4">
-            <button
-                class="flex items-center gap-2 mt-4 px-4 py-2 border-2
-                 border-primary-500 bg-primary-50 text-primary-500 
-                 rounded-lg hover:bg-primary-100"
-                (click)="addToCart()">
-                <mat-icon>add_shopping_cart</mat-icon>
-                เพิ่มไปยังรถเข็น
-            </button>
-            <button class="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-                (click)="buyProduct()">
-                ซื้อสินค้า
-            </button>
-        </div>
+    <div class="flex mt-4 gap-2 items-end">
+      <div class="grid grid-cols-3 gap-2 border w-48">
+        <button class="border-r" (click)="quantityHandler('minus')">-</button>
+        <span class="text-center">{{ quantity }}</span>
+        <button class="border-l" (click)="quantityHandler('plus')">+</button>
+      </div>
+      <span class="text-gray-300 text-sm">คงเหลือ {{ product.qty }}</span>
     </div>
 
+    <div class="flex gap-2 mt-4">
+      <button
+        class="flex items-center gap-2 mt-4 px-4 py-2 border-2 border-primary-500 bg-primary-50 text-primary-500 rounded-lg hover:bg-primary-100"
+        (click)="addToCart()"
+      >
+        <mat-icon>add_shopping_cart</mat-icon>
+        เพิ่มไปยังรถเข็น
+      </button>
+      <button
+        class="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+        (click)="buyProduct()"
+      >
+        ซื้อสินค้า
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="p-4 bg-white mt-4 border flex justify-between items-start">
+  <div class="flex gap-4 items-center">
+    <div *ngIf="shopDetail.profile_url" class="h-16 w-16 rounded-full">
+      <img
+        [src]="shopDetail.profile_url | imageUrl"
+        alt="Seller Image"
+        class="w-full h-full rounded-full object-cover"
+      />
+    </div>
+    <div
+      *ngIf="!shopDetail.profile_url"
+      class="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center"
+    >
+      <span class="text-gray-500 text-center">No Image</span>
+    </div>
+    <div>
+      <p class="font-semibold">{{ shopDetail.username }}</p>
+      <button
+        class="flex items-center gap-2 mt-1 px-4 py-2 border-2 border-primary-500 bg-primary-50 text-primary-500 rounded-lg hover:bg-primary-100"
+        [routerLink]="['/shop/', shopDetail.id]"
+      >
+        <mat-icon>store</mat-icon>
+        ดูร้านค้า
+      </button>
+    </div>
+  </div>
+  <div>
+    <p class="text-gray-500 mt-2">
+      สินค้าทั้งหมด {{ shopDetail.count_products }} ชิ้น
+    </p>
+    <p class="text-gray-500 mt-2 inline">
+      {{ shopDetail.last_login | date : "short" }}
+    </p>
+  </div>
 </div>
