@@ -3,6 +3,7 @@ package com.ecom.product_service.repository;
 import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
 import com.ecom.common.dto.ProductSearchDTO;
+import com.ecom.common.dto.ShopDetailDTO;
 import com.ecom.common.exception.BaseException;
 import org.apache.ibatis.annotations.*;
 
@@ -201,5 +202,13 @@ public interface ProductRepository {
             }
     )
     public List<ProductBean> findProductsByUserId(@Param("userId") Long userId, @Param("params") HashMap<String, Object> params) throws BaseException;
+
+    @Select({
+            "SELECT count(p.id) AS count_products, u.id, u.username, u.profile_url, u.last_login",
+            "FROM product AS p",
+            "LEFT JOIN user as u ON p.created_by = u.id",
+            "WHERE u.id = #{userId}"
+    })
+    public ShopDetailDTO findShopDetail(Long userId) throws BaseException;
 
 }

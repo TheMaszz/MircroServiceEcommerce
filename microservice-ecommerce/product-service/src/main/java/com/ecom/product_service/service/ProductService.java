@@ -5,6 +5,7 @@ import com.ecom.common.bean.ProductBean;
 import com.ecom.common.bean.ProductImageBean;
 import com.ecom.common.controller.BaseController;
 import com.ecom.common.dto.ProductSearchDTO;
+import com.ecom.common.dto.ShopDetailDTO;
 import com.ecom.common.exception.BaseException;
 import com.ecom.product_service.exception.ProductException;
 import com.ecom.product_service.repository.ProductRepository;
@@ -62,7 +63,17 @@ public class ProductService extends BaseController {
             if (product == null) {
                 throw new ProductException("not.found", "product not found");
             }
-            res.setData(product);
+
+            ShopDetailDTO shopDetailDTO = productRepository.findShopDetail(product.getCreated_by());
+            if(shopDetailDTO == null){
+                throw new ProductException("not.found.shop.detail", "shop detail not found");
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("product", product);
+            result.put("shopDetail", shopDetailDTO);
+
+            res.setData(result);
         } catch (Exception e) {
             this.checkException(e, res);
         }
