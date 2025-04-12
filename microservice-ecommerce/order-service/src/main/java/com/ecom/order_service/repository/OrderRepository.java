@@ -30,7 +30,16 @@ public interface OrderRepository {
             "FROM order_master AS o",
             "LEFT JOIN user AS u ON o.user_id = u.id",
             "LEFT JOIN user AS u2 ON o.shop_id = u2.id",
-            "WHERE o.user_id = #{user_id}",
+            "WHERE 1=1",
+
+            "<if test='user_id != null'>",
+            "AND o.user_id = #{user_id}",
+            "</if>",
+
+            "<if test='shop_id != null'>",
+            "AND o.shop_id = #{shop_id}",
+            "</if>",
+
             "<if test='search != null and search != \"\"'>",
             " AND o.id LIKE CONCAT('%', #{search}, '%')",
             "</if>",
@@ -44,6 +53,10 @@ public interface OrderRepository {
 
             "<if test='stage != \"All\" and (stageList == null or stageList.size() == 0)'>",
             " AND o.stage = #{stage}",
+            "</if>",
+
+            "<if test=\"start_date != null and end_date != null\">",
+            " AND o.created_at &gt;= #{start_date} AND o.created_at &lt; DATE_ADD(#{end_date}, INTERVAL 1 DAY)",
             "</if>",
 
             "<if test='isCount == false'>",

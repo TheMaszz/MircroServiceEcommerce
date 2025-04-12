@@ -27,6 +27,54 @@ public class OrderService extends BaseController {
         this.orderRepository = orderRepository;
     }
 
+    public ApiResponse getMyShopOrders(
+            HttpServletRequest request,
+            String search,
+            int page_number,
+            int page_size,
+            String sort,
+            String sort_type,
+            String stage,
+            String start_date,
+            String end_date
+    ) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            String userId = request.getHeader("X-User-Id");
+            params.put("shop_id", userId);
+            if (search != null && !search.isEmpty()) {
+                params.put("search", search);
+            }
+            if (stage != null && !stage.isEmpty()) {
+                if (stage.contains("||")) {
+                    String[] stages = stage.split("\\|\\|");
+                    params.put("stageList", Arrays.asList(stages));
+                } else {
+                    params.put("stage", stage);
+                }
+            }
+            if(start_date != null && end_date != null){
+                params.put("start_date", start_date);
+                params.put("end_date", end_date);
+            }
+
+            this.pagination(page_number, page_size, sort, sort_type, params);
+            params.put("isCount", false);
+            List<OrderBean> orders = orderRepository.findMyOrders(params);
+            params.put("isCount", true);
+            List<OrderBean> ordersCount = orderRepository.findMyOrders(params);
+            res.getPaginate().setLimit(page_size);
+            res.getPaginate().setPage(page_number);
+            res.getPaginate().setTotal(ordersCount.size());
+
+            res.setData(orders);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
     public ApiResponse getMyOrders(
             HttpServletRequest request,
             String search,
