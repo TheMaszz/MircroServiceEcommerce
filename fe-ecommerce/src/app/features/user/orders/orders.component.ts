@@ -72,7 +72,6 @@ export class OrdersComponent implements OnInit {
           this.totalPages = Math.ceil(
             response.paginate.total / response.paginate.limit
           );
-          console.log('orders: ', this.orders);
           window.closeLoading();
         },
         error: (error) => {
@@ -89,17 +88,16 @@ export class OrdersComponent implements OnInit {
   }
 
   checkStage2Text(value: string): string {
-    return this.orderService.checkStage2Text(value); 
+    return this.orderService.checkStage2Text(value);
   }
-  
+
   checkStage2Icon(value: string): string {
     return this.orderService.checkStage2Icon(value);
   }
-  
+
   checkStageColor(value: string): string {
-    return this.orderService.checkStageColor(value); 
+    return this.orderService.checkStageColor(value);
   }
-  
 
   onPageChanged(page: number) {
     this.route.queryParams.subscribe((params) => {
@@ -108,6 +106,25 @@ export class OrdersComponent implements OnInit {
         page: page,
       };
       this.router.navigate(['/orders/'], { queryParams: updatedParams });
+    });
+  }
+
+  confirmDelivery(id: number) {
+    this.orderService.updateStage(id, 'Completed').subscribe({
+      next: (response) => {
+        window.alertSuccess('รับสินค้าเรียบร้อยแล้ว!');
+        this.fetchOrders();
+      },
+      error: (error) => {
+        console.log('res Error: ', error);
+        if (error.error?.status === 409) {
+          window.alertFail('พบข้อมูลซ้ำ!');
+        } else if (error.status === 401) {
+          window.alertFail('กรุณาเข้าสู่ระบบใหม่!');
+        } else {
+          window.alertFail('เกิดข้อผิดพลาดในการแก้ไขข้อมูล!');
+        }
+      },
     });
   }
 

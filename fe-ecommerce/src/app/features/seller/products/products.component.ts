@@ -1,6 +1,6 @@
-import { CommonModule, registerLocaleData } from '@angular/common';
-import { Component, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -15,7 +15,7 @@ import { ImageUrlPipe } from 'app/core/pipe/imageUrlPipe';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [MaterialModules, CommonModule, ImageUrlPipe],
+  imports: [MaterialModules, CommonModule, ImageUrlPipe, ReactiveFormsModule],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit {
@@ -25,10 +25,6 @@ export class ProductsComponent implements OnInit {
   ) {}
 
   private unsubscribe$ = new Subject<void>();
-
-  currentPage: number = 1;
-  totalPages: number = 0;
-  searchProduct: string = '';
 
   searchInputControl: FormControl = new FormControl('');
   displayedColumns: string[] = [
@@ -55,15 +51,6 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadProducts();
-
-    this.searchInputControl.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (this.paginator) {
-          this.paginator.pageIndex = 0;
-        }
-        this.onGetSearch(value);
-      });
   }
 
   loadProducts(params?: any) {
@@ -216,8 +203,11 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  applyFilter(event: Event) {
-    
+  applyFilter(event: KeyboardEvent) {
+    if(event.key === 'Enter' || event.key === 'numpadEnter') {
+      let keyword = this.searchInputControl.value.trim().toLowerCase();
+      this.onGetSearch(keyword);
+    }
   }
 
 }

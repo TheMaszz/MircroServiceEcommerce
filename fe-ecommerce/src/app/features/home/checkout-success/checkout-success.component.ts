@@ -5,7 +5,7 @@ import { MaterialModules } from 'app/core/modules/material.module';
 @Component({
   selector: 'app-checkout-success',
   standalone: true,
-  imports: [MaterialModules],
+  imports: [MaterialModules, RouterModule],
   templateUrl: './checkout-success.component.html'
 })
 export class CheckoutSuccessComponent {

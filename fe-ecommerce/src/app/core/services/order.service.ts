@@ -13,41 +13,41 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  private stages:any[] = [
+  private stages: any[] = [
     {
       text: 'ทั้งหมด',
       value: 'All',
-      icon: 'list_alt', 
+      icon: 'list_alt',
     },
     {
       text: 'กำลังดำเนินการ',
       value: 'Pending',
-      icon: 'pending_actions', 
+      icon: 'pending_actions',
     },
     {
       text: 'ที่ต้องชำระ',
       value: 'Payment',
-      icon: 'payment', 
+      icon: 'payment',
     },
     {
       text: 'ที่ต้องจัดส่ง',
       value: 'Preparing',
-      icon: 'inventory', 
+      icon: 'inventory',
     },
     {
       text: 'ที่ต้องได้รับ',
       value: 'Shipping||Delivered',
-      icon: 'local_shipping', 
+      icon: 'local_shipping',
     },
     {
       text: 'สำเร็จ',
       value: 'Completed',
-      icon: 'check_circle', 
+      icon: 'check_circle',
     },
     {
       text: 'ยกเลิก',
       value: 'Cancelled',
-      icon: 'cancel', 
+      icon: 'cancel',
     },
   ];
 
@@ -88,7 +88,37 @@ export class OrderService {
     );
   }
 
-  getStages(): any[]{
+  getMyShopOrders(
+    params: {
+      search?: string;
+      page_number?: number;
+      page_size?: number;
+      sort?: string;
+      sort_type?: 'asc' | 'desc';
+      stage?: string;
+    } = {
+      search: '',
+      page_number: 1,
+      page_size: 10,
+      sort: 'created_at',
+      sort_type: 'desc',
+      stage: 'All',
+    }
+  ): Observable<ResponseModel> {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        httpParams = httpParams.set(key, String(value));
+      }
+    });
+
+    return this.http.get<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/getMyShopOrders`,
+      { params: httpParams }
+    );
+  }
+
+  getStages(): any[] {
     return this.stages;
   }
 
@@ -148,5 +178,12 @@ export class OrderService {
       default:
         return 'text-gray-500';
     }
+  }
+
+  updateStage(id: number, stage: string): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/updateStage/${id}`,
+      { stage: stage }
+    );
   }
 }

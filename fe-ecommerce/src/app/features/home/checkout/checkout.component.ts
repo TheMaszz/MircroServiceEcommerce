@@ -58,7 +58,7 @@ export class CheckoutComponent implements OnInit {
         console.log('my address: ', this.myAddress);
         window.closeLoading();
       });
-    }
+    }    
   }
 
   calcTotalPricePerShop(cart: CartGroup): number {
