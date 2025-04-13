@@ -49,7 +49,7 @@ export class SellerLayoutComponent {
     },
     {
       path: '/seller/orders',
-      icon: 'shopping_cart',
+      icon: 'receipt_long',
       text: 'การสั่งซื้อของฉัน',
     },
   ];
