@@ -39,7 +39,8 @@ export class SigninComponent {
       if(res.response_desc == "success"){
         console.log("signin success: ", res);
 
-        sessionStorage.setItem('jwt', res.data.token)
+        sessionStorage.setItem('jwt', res.data.token);
+        sessionStorage.setItem('user', JSON.stringify(res.data));
 
         this._router.navigate(["/"]);
       }else{

@@ -4,6 +4,8 @@ import { MainLayoutComponent } from './shared/layouts/main-layout/main-layout.co
 import { AuthGuard } from './core/guards/auth.guard';
 import { UserLayoutComponent } from './shared/layouts/user-layout/user-layout.component';
 import { SellerLayoutComponent } from './shared/layouts/seller-layout/seller-layout.component';
+import { AdminGuard } from './core/guards/admin.guard';
+import { AdminLayoutComponent } from './shared/layouts/admin-layout/admin-layout.component';
 
 export const routes: Routes = [
   {
@@ -33,5 +35,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/seller/seller.routes').then((m) => m.SELLER_ROUTES),
   },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [AuthGuard, AdminGuard],
+    loadChildren: () =>
+      import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  }
 
 ];

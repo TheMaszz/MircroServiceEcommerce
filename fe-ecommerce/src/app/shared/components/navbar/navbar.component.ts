@@ -125,6 +125,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     sessionStorage.removeItem('jwt');
+    sessionStorage.removeItem('user');
     this.router.navigate(['/auth/signin']);
   }
 }
