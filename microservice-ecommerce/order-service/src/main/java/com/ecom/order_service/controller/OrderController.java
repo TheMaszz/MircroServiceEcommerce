@@ -62,9 +62,12 @@ public class OrderController {
             @RequestParam(name = "page_number", required = false) int page_number,
             @RequestParam(name = "page_size", required = false) int page_size,
             @RequestParam(name = "sort", required = false) String sort,
-            @RequestParam(name = "sort_type", required = false) String sort_type
+            @RequestParam(name = "sort_type", required = false) String sort_type,
+            @RequestParam(name = "stage", required = false) String stage,
+            @RequestParam(name = "start_date", required = false) String start_date,
+            @RequestParam(name = "end_date", required = false) String end_date
     ) throws BaseException {
-        ApiResponse res = orderService.getAll(search, page_number, page_size, sort, sort_type);
+        ApiResponse res = orderService.getAll(search, page_number, page_size, sort, sort_type, stage, start_date, end_date);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -13,8 +13,10 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
+  private products = new BehaviorSubject<ResponseModel | null>(null);
   private myProducts = new BehaviorSubject<ResponseModel | null>(null);
 
+  products$ = this.products.asObservable();
   myProducts$ = this.myProducts.asObservable();
 
   getProducts(
@@ -39,10 +41,19 @@ export class ProductService {
       }
     });
 
-    return this.http.get<ResponseModel>(
-      `${environment.apiUrl}/${this.serviceUrl}/getAll`,
-      { params: httpParams }
-    );
+    return this.http
+      .get<ResponseModel>(`${environment.apiUrl}/${this.serviceUrl}/getAll`, {
+        params: httpParams,
+      })
+      .pipe(
+        tap((res: ResponseModel) => {
+          this.products.next(res);
+        }),
+        catchError((error: any) => {
+          console.error('Error:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   getProductById(id: number): Observable<ResponseModel> {

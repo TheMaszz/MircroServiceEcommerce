@@ -122,7 +122,10 @@ public class OrderService extends BaseController {
             int page_number,
             int page_size,
             String sort,
-            String sort_type
+            String sort_type,
+            String stage,
+            String start_date,
+            String end_date
     ) throws BaseException {
         ApiResponse res = new ApiResponse();
         HashMap<String, Object> params = new HashMap<>();
@@ -130,6 +133,19 @@ public class OrderService extends BaseController {
             if (search != null && !search.isEmpty()) {
                 params.put("search", search);
             }
+            if (stage != null && !stage.isEmpty()) {
+                if (stage.contains("||")) {
+                    String[] stages = stage.split("\\|\\|");
+                    params.put("stageList", Arrays.asList(stages));
+                } else {
+                    params.put("stage", stage); // Single stage
+                }
+            }
+            if(start_date != null && end_date != null){
+                params.put("start_date", start_date);
+                params.put("end_date", end_date);
+            }
+            
             this.pagination(page_number, page_size, sort, sort_type, params);
             params.put("isCount", false);
             List<OrderBean> orders = orderRepository.findAll(params);

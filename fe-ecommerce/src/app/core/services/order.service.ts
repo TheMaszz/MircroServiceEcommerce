@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { OrderRequest } from 'app/models/order.model';
 import { ResponseModel } from 'app/models/response.model';
 import { environment } from 'environments/environment';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +12,10 @@ export class OrderService {
   private serviceUrl = 'apiendpoint/order';
 
   constructor(private http: HttpClient) {}
+
+  private orders = new BehaviorSubject<ResponseModel | null>(null);
+
+  orders$ = this.orders.asObservable();
 
   private stages: any[] = [
     {
@@ -50,6 +54,36 @@ export class OrderService {
       icon: 'cancel',
     },
   ];
+
+  getAllOrders(
+    params: {
+      search?: string;
+      page_number?: number;
+      page_size?: number;
+      sort?: string;
+      sort_type?: 'asc' | 'desc';
+      stage?: string;
+    } = {
+      search: '',
+      page_number: 1,
+      page_size: 10,
+      sort: 'created_at',
+      sort_type: 'desc',
+      stage: 'All',
+    }
+  ): Observable<ResponseModel> {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        httpParams = httpParams.set(key, String(value));
+      }
+    });
+
+    return this.http.get<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/getAll`,
+      { params: httpParams }
+    );
+  }
 
   create(data: OrderRequest[]): Observable<ResponseModel> {
     return this.http.post<ResponseModel>(

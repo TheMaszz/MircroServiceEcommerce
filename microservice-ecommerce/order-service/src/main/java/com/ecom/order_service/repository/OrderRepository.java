@@ -152,19 +152,37 @@ public interface OrderRepository {
             " o.id,",
             " o.user_id,",
             " o.address_id,",
+            " o.shop_id,",
             " o.stage,",
             " o.total_amount,",
             " o.created_at,",
             " o.updated_at,",
-            " u.username",
+            " u.username,",
             " u2.username AS shop_name",
             "FROM order_master AS o",
             "LEFT JOIN user AS u ON o.user_id = u.id",
-            "LEFT JOIN user AS u2 ON o.user_id = u2.id",
+            "LEFT JOIN user AS u2 ON o.shop_id = u2.id",
             "WHERE 1=1",
+
             "<if test='search != null and search != \"\"'>",
             " AND o.id LIKE CONCAT('%', #{search}, '%')",
             "</if>",
+
+            "<if test='stageList != null and stageList.size() > 0'>",
+            " AND o.stage IN ",
+            "<foreach item='stg' collection='stageList' open='(' separator=',' close=')'>",
+            " #{stg} ",
+            "</foreach>",
+            "</if>",
+
+            "<if test='stage != \"All\" and (stageList == null or stageList.size() == 0)'>",
+            " AND o.stage = #{stage}",
+            "</if>",
+
+            "<if test=\"start_date != null and end_date != null\">",
+            " AND o.created_at &gt;= #{start_date} AND o.created_at &lt; DATE_ADD(#{end_date}, INTERVAL 1 DAY)",
+            "</if>",
+
             "<if test='isCount == false'>",
             " Order by ${sorting} ${sort_type} limit #{start}, #{end}",
             "</if>",
@@ -182,7 +200,9 @@ public interface OrderRepository {
                     @Result(property = "updated_at", column = "updated_at"),
                     @Result(property = "shop_name", column = "shop_name"),
                     @Result(property = "products", column = "id",
-                            many = @Many(select = "findOrderProductByOrderId"))
+                            many = @Many(select = "findOrderProductByOrderId")),
+                    @Result(property = "paymentStatus", column = "id",
+                            many = @Many(select = "findPaymentStatusByOrderId"))
             }
     )
     public List<OrderBean> findAll(HashMap<String, Object> params) throws BaseException;
