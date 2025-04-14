@@ -88,4 +88,10 @@ export class UserService {
   refreshAddress() {
     this.getMyAddress().subscribe();
   }
+
+  getDashboardData(): Observable<ResponseModel> {
+    return this.http.get<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/admin/dashboard`
+    );
+  }
 }

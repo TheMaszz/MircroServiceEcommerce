@@ -1,1 +1,81 @@
-<p>dashboard works!</p>
+<ng-container>
+  <div class="flex items-center justify-between pb-4 border-b">
+    <h2 class="text-xl">แดชบอร์ด</h2>
+  </div>
+
+  <!-- summary section -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+    <!-- สินค้าทั้งหมด -->
+    <div
+      class="p-4 bg-red-500 text-white rounded-xl flex items-center min-h-[96px] gap-4 shadow-md"
+    >
+      <div class="bg-white text-red-500 rounded-full p-3">
+        <mat-icon
+          class="text-3xl"
+          style="width: 30px !important; height: 30px !important"
+          >inventory_2</mat-icon
+        >
+      </div>
+      <div class="text-left">
+        <p class="text-sm">สินค้าทั้งหมด</p>
+        <p class="text-xl font-bold">{{ dashbordData?.count_products }} ชิ้น</p>
+      </div>
+    </div>
+
+    <!-- การสั่งซื้อทั้งหมด -->
+    <div
+      class="p-4 bg-green-500 text-white rounded-xl flex items-center min-h-[96px] gap-4 shadow-md"
+    >
+      <div class="bg-white text-green-500 rounded-full p-3">
+        <mat-icon
+          class="text-3xl"
+          style="width: 30px !important; height: 30px !important"
+          >shopping_cart</mat-icon
+        >
+      </div>
+      <div class="text-left">
+        <p class="text-sm">การสั่งซื้อทั้งหมด</p>
+        <p class="text-xl font-bold">{{ dashbordData?.count_orders }} รายการ</p>
+      </div>
+    </div>
+
+    <!-- ผู้ใช้งานทั้งหมด -->
+    <div
+      class="p-4 bg-blue-500 text-white rounded-xl flex items-start min-h-[96px] gap-4 shadow-md"
+    >
+      <div class="bg-white text-blue-500 rounded-full p-3 mt-1">
+        <mat-icon
+          class="text-3xl"
+          style="width: 30px !important; height: 30px !important"
+          >people</mat-icon
+        >
+      </div>
+      <div class="text-left text-sm font-bold">
+        <ng-container *ngFor="let user of dashbordData?.count_user_by_role">
+          <p>{{ checkRole(user.role) }}: {{ user.count_user_by_role }} คน</p>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- รายรับทั้งหมด -->
+    <div
+      class="p-4 bg-yellow-500 text-white rounded-xl flex items-center min-h-[96px] gap-4 shadow-md"
+    >
+      <div class="bg-white text-yellow-500 rounded-full p-3">
+        <mat-icon
+          class="text-3xl"
+          style="width: 30px !important; height: 30px !important"
+          >attach_money</mat-icon
+        >
+      </div>
+      <div class="text-left">
+        <p class="text-sm">รายรับทั้งหมด</p>
+        <p class="text-xl font-bold">
+          {{
+            dashbordData?.total_revenue | currency : "THB" : "symbol" : "1.0-0"
+          }}
+        </p>
+      </div>
+    </div>
+  </div>
+</ng-container>
