@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<ApiResponse> getMyProfile(HttpServletRequest request) throws BaseException{
+    public ResponseEntity<ApiResponse> getMyProfile(HttpServletRequest request) throws BaseException {
         ApiResponse res = userService.findMyProfile(request);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
@@ -118,6 +118,14 @@ public class UserController {
             @PathVariable Long id
     ) throws BaseException {
         ApiResponse res = userService.defaultAddress(request, id);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/admin/dashboard")
+    public ResponseEntity<ApiResponse> getDashboardData(
+            HttpServletRequest request
+    ) throws BaseException {
+        ApiResponse res = userService.getDashboardData(request);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

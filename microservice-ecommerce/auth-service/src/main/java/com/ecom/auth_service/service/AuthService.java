@@ -228,8 +228,8 @@ public class AuthService extends BaseController {
 
     private String checkRole(Integer role) {
         return switch (role) {
-            case 0 -> "ADMIN";
-            case 1 -> "USER";
+            case 0 -> "USER";
+            case 1 -> "ADMIN";
             case 2 -> "SELLER";
             default -> "INVALID";
         };

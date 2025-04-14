@@ -4,6 +4,7 @@ import com.ecom.common.bean.AddressBean;
 import com.ecom.common.bean.ApiResponse;
 import com.ecom.common.bean.UserBean;
 import com.ecom.common.controller.BaseController;
+import com.ecom.common.dto.DashboardDataDTO;
 import com.ecom.common.exception.BaseException;
 import com.ecom.user_service.exception.UserException;
 import com.ecom.user_service.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService extends BaseController {
@@ -222,6 +224,33 @@ public class UserService extends BaseController {
             userRepository.clearDefaultAddress(Long.valueOf(userId));
 
             userRepository.defaultAddress(id);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    public ApiResponse getDashboardData(HttpServletRequest request) throws BaseException {
+        ApiResponse res = new ApiResponse();
+        try {
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-Role");
+
+            Set<String> allowedRoles = Set.of("ADMIN");
+            if (!allowedRoles.contains(role)) {
+                throw new UserException("no.permission.get", "you no permission to get Dashboard data");
+            }
+
+            HashMap<String, Object> dashboardData = new HashMap<>();
+            List<HashMap<String, Object>> count_user_by_role = userRepository.countUserByRole();
+            Long count_products = userRepository.countProducts();
+            Long count_orders = userRepository.countOrders();
+            dashboardData.put("count_user_by_role", count_user_by_role);
+            dashboardData.put("count_products", count_products);
+            dashboardData.put("count_orders", count_orders);
+            dashboardData.put("total_revenue", userRepository.totalRevenue());
+
+            res.setData(dashboardData);
         } catch (Exception e) {
             this.checkException(e, res);
         }
