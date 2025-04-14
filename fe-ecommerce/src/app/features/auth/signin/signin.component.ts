@@ -18,7 +18,7 @@ import { AuthService } from 'app/core/services/auth.service';
 })
 export class SigninComponent {
   constructor(
-    private _formBuilder: FormBuilder, 
+    private _formBuilder: FormBuilder,
     private authService: AuthService,
     private _router: Router
   ) {
@@ -30,22 +30,26 @@ export class SigninComponent {
 
   signinFormGroup: FormGroup;
 
-  onSubmitHandler(){
+  onSubmitHandler() {
     const data = {
       usernameOrEmail: this.signinFormGroup.get('usernameOrEmail')?.value,
-      password: this.signinFormGroup.get('password')?.value
-    }
-    this.authService.signin(data).subscribe((res: any)=>{
-      if(res.response_desc == "success"){
-        console.log("signin success: ", res);
+      password: this.signinFormGroup.get('password')?.value,
+    };
+    this.authService.signin(data).subscribe({
+      next: (res: any) => {
+        console.log('signin success: ', res);
 
         sessionStorage.setItem('jwt', res.data.token);
         sessionStorage.setItem('user', JSON.stringify(res.data));
 
-        this._router.navigate(["/"]);
-      }else{
-        console.error(res.error);
-      }
+        this._router.navigate(['/']);
+      },
+      error: (err) => {
+        console.log(err);
+        window.alertFail(
+          'เข้าสู่ระบบไม่สำเร็จ! กรุณาตรวจสอบชื่อผู้ใช้หรือรหัสผ่านของคุณอีกครั้ง'
+        );
+      },
     });
   }
 }

@@ -53,6 +53,7 @@ export class SignupComponent {
     this.authService.signup(data).subscribe({
       next: (response) => {
         console.log('res: ', response);
+        window.alertSuccess('สมัครสมาชิกสำเร็จ!');
         this._router.navigate(['/auth/signin']);
       },
       error: (error) => {
