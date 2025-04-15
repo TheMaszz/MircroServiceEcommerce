@@ -25,18 +25,24 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     window.alertLoading();
-    this.cartService.cartItems$.subscribe((carts) => {
-      this.carts = carts;
-      window.closeLoading();
+    this.cartService.getCart().subscribe();
+    this.cartService.cartItems$.subscribe({
+      next: (carts) => {
+        this.carts = carts;
+        this.calculateTotals();
+        window.closeLoading();
+      },
+      error: (error) => {
+        console.error('Error fetching cart:', error);
+        window.closeLoading();
+      },
     });
-    this.calculateTotals();
   }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
-
 
   calculateTotals(): void {
     this.totalSelectedPrice = 0;
@@ -74,33 +80,48 @@ export class CartComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateCartSelection(cart: CartGroup): void {
-    cart.selected = cart.products.every((p) => p.selected);
-  }
-
   toggleProductSelection(cart: CartGroup, product: CartItem): void {
     product.selected = !product.selected;
-    this.updateCartSelection(cart);
-    this.cartService.updateCart(this.carts);
-    this.calculateTotals(); 
+
+    this.cartService.updateSelectProduct(product).subscribe({
+      next: (response) => {
+        console.log('Update response:', response);
+        this.carts = response.data;
+        this.calculateTotals();
+      },
+      error: (error) => {
+        console.log('Error updating product selection:', error);
+      },
+    });
   }
 
   toggleCartSelection(cart: CartGroup): void {
     const newState = !cart.selected;
     cart.selected = newState;
-    cart.products.forEach((p) => (p.selected = newState));
-    this.cartService.updateCart(this.carts);
-    this.calculateTotals();
+    this.cartService.updateSelectCart(cart).subscribe({
+      next: (response) => {
+        console.log('Update response:', response);
+        this.carts = response.data;
+        this.calculateTotals();
+      },
+      error: (error) => {
+        console.log('Error updating cart selection:', error);
+      },
+    });
   }
 
   toggleAllSelection(): void {
     const allSelected = this.isAllSelected();
-    this.carts.forEach((cart) => {
-      cart.selected = !allSelected;
-      cart.products.forEach((p) => (p.selected = !allSelected));
+    this.cartService.updateSelectAll(!allSelected).subscribe({
+      next: (response) => {
+        console.log('Update response:', response);
+        this.carts = response.data;
+        this.calculateTotals();
+      },
+      error: (error) => {
+        console.log('Error updating all selection:', error);
+      },
     });
-    this.cartService.updateCart(this.carts);
-    this.calculateTotals();
   }
 
   isAllSelected(): boolean {
@@ -111,7 +132,17 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   removeProduct(productId: number) {
-    this.cartService.removeFromCart(productId);
+    this.cartService.removeFromCart(productId).subscribe({
+      next: (response) => {
+        console.log('Remove response:', response);
+        this.carts = response.data;
+        this.calculateTotals();
+        this.cartService.getCart().subscribe();
+      },
+      error: (error) => {
+        console.log('Error removing product:', error);
+      },
+    });
   }
 
   quantityHandler(condition: string, product: CartItem) {
@@ -124,12 +155,30 @@ export class CartComponent implements OnInit, OnDestroy {
 
     product.totalPrice = product.price * product.qty;
 
-    this.cartService.updateQty(product);
-    this.calculateTotals(); 
+    this.cartService.updateQty(product).subscribe({
+      next: (response) => {
+        console.log('Update response:', response);
+        this.carts = response.data;
+        this.calculateTotals();
+      },
+      error: (error) => {
+        console.log('Error updating quantity:', error);
+      },
+    });
   }
 
   clearCart() {
-    this.cartService.clearCart();
+    this.cartService.clearCart().subscribe({
+      next: (response) => {
+        console.log('Update response:', response);
+        this.carts = response.data;
+        this.calculateTotals();
+        this.cartService.getCart().subscribe();
+      },
+      error: (error) => {
+        console.log('Error clear cart:', error);
+      },
+    });
   }
 
   trackByProductId(index: number, product: CartItem): number {
@@ -141,8 +190,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   checkoutHandler() {
-    console.log('selectedItems: ', this.selectedItems);
-    localStorage.setItem('checkoutItems', JSON.stringify(this.selectedItems));
     this.router.navigate(['/checkout']);
   }
 }

@@ -79,6 +79,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       switchMap((value) => this.getAutoCompleteOptions(value || ''))
     );
 
+    this.cartService.getCart().subscribe();
     this.cartService.cartItems$.subscribe((carts) => {
       this.cartItemCount = carts.reduce(
         (sum: number, group: CartGroup) => sum + group.products.length,

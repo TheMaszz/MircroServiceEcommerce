@@ -103,7 +103,16 @@ export class ProductComponent implements OnInit, OnDestroy {
       created_user: this.product.created_user,
       selected: false,
     };
-    this.cartService.addToCart(newProduct);
+    this.cartService.addToCart(newProduct).subscribe({
+      next: () => {
+        this.cartService.getCart().subscribe(()=>{
+          window.alertSuccess('เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว');
+        });
+      },
+      error: (error) => {
+        console.log('Error adding product to cart:', error);
+      },
+    });
   }
 
   buyProduct() {
@@ -118,8 +127,14 @@ export class ProductComponent implements OnInit, OnDestroy {
       created_user: this.product.created_user,
       selected: false,
     };
-    this.cartService.addToCart(newProduct);
-    this.router.navigate(['/carts']);
+    this.cartService.addToCart(newProduct).subscribe({
+      next: (res) => {
+        this.router.navigate(['/carts']);
+      },
+      error: (error) => {
+        console.log('Error adding product to cart:', error);
+      },
+    });
   }
 
   backNavigate() {

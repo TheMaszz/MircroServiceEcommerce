@@ -25,7 +25,7 @@ import { RouterLink } from '@angular/router';
     MaterialModules,
     FormsModule,
     ModalCheckoutComponent,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './checkout.component.html',
 })
@@ -45,20 +45,26 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit(): void {
     window.alertLoading();
-    this.selectedItems = JSON.parse(
-      localStorage.getItem('checkoutItems') || '[]'
-    );
 
-    if (this.selectedItems.length === 0) {
-      this.location.back();
-    } else {
-      this.userService.myAddress$.subscribe((response) => {
-        this.myAddress = response!;
-        this.selectedAddress = this.myAddress[0];
-        console.log('my address: ', this.myAddress);
+    this.cartService.getCheckoutItems().subscribe({
+      next: (response) => {
+        this.selectedItems = response.data;
+        if (this.selectedItems.length === 0) {
+          this.location.back();
+        } else {
+          this.userService.myAddress$.subscribe((response) => {
+            this.myAddress = response!;
+            this.selectedAddress = this.myAddress[0];
+            console.log('my address: ', this.myAddress);
+            window.closeLoading();
+          });
+        }
+      },
+      error: (error) => {
+        console.log('error fetch checkoutItems: ', error);
         window.closeLoading();
-      });
-    }    
+      },
+    });
   }
 
   calcTotalPricePerShop(cart: CartGroup): number {
@@ -81,6 +87,7 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    window.alertLoading();
     let normalizeData: OrderRequest[] = [];
     this.selectedItems.map((cart) => {
       const newData: OrderRequest = {
@@ -117,10 +124,17 @@ export class CheckoutComponent implements OnInit {
           this.paymentService
             .checkoutProducts(normalizeProduct)
             .subscribe((paymentRes: StripeResponse) => {
-              console.log('paymentRes: ', paymentRes);
               if (paymentRes.status === 'SUCCESS') {
-                localStorage.setItem('checkoutItems', '[]');
-                this.cartService.removeSelected();
+                this.cartService.removeCheckoutItems().subscribe({
+                  next: (response) => {
+                    console.log('response: ', response);
+                    window.closeLoading();
+                  },
+                  error: (error) => {
+                    console.log('error: ', error);
+                    window.closeLoading();
+                  },
+                });
 
                 this.dialog.open(ModalCheckoutComponent, {
                   disableClose: true,

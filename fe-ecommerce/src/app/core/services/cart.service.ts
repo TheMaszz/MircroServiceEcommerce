@@ -1,133 +1,101 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CartGroup, CartItem } from 'app/models/cart.model';
-import { BehaviorSubject } from 'rxjs';
+import { ResponseModel } from 'app/models/response.model';
+import { environment } from 'environments/environment';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private cartKey = 'cart';
-  private cartItems = new BehaviorSubject<CartGroup[]>(
-    this.getCartFromStorage()
-  );
+  private serviceUrl = 'apiendpoint/cart';
+
+  constructor(private http: HttpClient) {}
+
+  private cartItems = new BehaviorSubject<CartGroup[]>([]);
 
   cartItems$ = this.cartItems.asObservable();
 
-  constructor() {}
-
-  private getCartFromStorage(): CartGroup[] {
-    return JSON.parse(localStorage.getItem(this.cartKey) || '[]');
+  getCart(): Observable<CartGroup[]> {
+    return this.http
+      .get<CartGroup[]>(`${environment.apiUrl}/${this.serviceUrl}/get`)
+      .pipe(
+        tap(
+          (cart: CartGroup[]) => {
+            this.cartItems.next(cart);
+          },
+          (error) => {
+            console.error('Error fetching cart:', error);
+          }
+        )
+      );
   }
 
-  updateCart(cart: CartGroup[]): void {
-    localStorage.setItem(this.cartKey, JSON.stringify(cart));
-    this.cartItems.next(cart);
-  }
-
-  addToCart(product: CartItem): void {
-    let cart = this.getCartFromStorage();
-
-    let createdByGroup = cart.find(
-      (group: CartGroup) => group.created_by === product.created_by
-    );
-
-    if (!createdByGroup) {
-      createdByGroup = {
-        created_by: product.created_by,
-        created_user: product.created_user,
-        products: [],
-        selected: false,
-      };
-      cart.push(createdByGroup);
-    }
-
-    const productIndex = createdByGroup.products.findIndex(
-      (item: CartItem) => item.id === product.id
-    );
-
-    if (productIndex !== -1) {
-      createdByGroup.products[productIndex].qty += product.qty;
-      createdByGroup.products[productIndex].totalPrice =
-        createdByGroup.products[productIndex].qty *
-        createdByGroup.products[productIndex].price;
-    } else {
-      product.totalPrice = product.qty * product.price;
-      createdByGroup.products.push(product);
-    }
-
-    this.updateCart(cart);
-  }
-
-  removeFromCart(productId: number): void {
-    let cart = this.getCartFromStorage()
-      .map((group: CartGroup) => {
-        group.products = group.products.filter(
-          (item: CartItem) => item.id !== productId
-        );
-        return group;
-      })
-      .filter((group: CartGroup) => group.products.length > 0);
-
-    this.updateCart(cart);
-  }
-
-  clearCart(): void {
-    this.updateCart([]);
-  }
-
-  getCartLength(): number {
-    return this.cartItems.value.reduce(
-      (sum: number, group: CartGroup) => sum + group.products.length,
-      0
+  addToCart(product: CartItem): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/add`,
+      product
     );
   }
 
-  updateQty(product: CartItem) {
-    let cart = this.getCartFromStorage();
-
-    let createdByGroup = cart.find(
-      (group: CartGroup) => group.created_by === product.created_by
+  updateCart(cart: CartGroup[]): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/update`,
+      cart
     );
-
-    if (!createdByGroup) {
-      createdByGroup = {
-        created_by: product.created_by,
-        created_user: product.created_user,
-        products: [],
-        selected: false,
-      };
-      cart.push(createdByGroup);
-    }
-
-    const productIndex = createdByGroup.products.findIndex(
-      (item: CartItem) => item.id === product.id
-    );
-
-    if (productIndex !== -1) {
-      createdByGroup.products[productIndex].qty = product.qty;
-      createdByGroup.products[productIndex].totalPrice =
-        createdByGroup.products[productIndex].qty *
-        createdByGroup.products[productIndex].price;
-    } else {
-      product.totalPrice = product.qty * product.price;
-      createdByGroup.products.push(product);
-    }
-    this.updateCart(cart);
   }
 
-  removeSelected() {
-    let cart: CartGroup[] = this.getCartFromStorage();
+  removeFromCart(productId: number): Observable<ResponseModel> {
+    return this.http.delete<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/remove/${productId}`
+    );
+  }
 
-    cart = cart.filter((group) => {
-      if (group.selected) {
-        return false; 
-      }
+  clearCart(): Observable<ResponseModel> {
+    return this.http.delete<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/clear`
+    );
+  }
 
-      group.products = group.products.filter((product) => !product.selected);
+  updateQty(product: CartItem): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/update/product/qty/${product.id}?qty=${product.qty}`,
+      {}
+    );
+  }
 
-      return group.products.length > 0;
-    });
+  updateSelectProduct(product: CartItem): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/update/selectProduct/${product.id}?selected=${product.selected}`,
+      {}
+    );
+  }
 
-    this.updateCart(cart);
+  updateSelectAll(selected: boolean): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/update/selectAll?selected=${selected}`,
+      {}
+    );
+  }
+
+  updateSelectCart(cart: CartGroup): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/update/selectCart/${cart.created_by}?selected=${cart.selected}`,
+      {}
+    );
+  }
+
+  getCheckoutItems(): Observable<ResponseModel> {
+    return this.http.get<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/getCheckoutItems`
+    );
+  }
+
+  removeCheckoutItems(): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>(
+      `${environment.apiUrl}/${this.serviceUrl}/removeCheckoutItems`,
+      {}
+    );
   }
 }

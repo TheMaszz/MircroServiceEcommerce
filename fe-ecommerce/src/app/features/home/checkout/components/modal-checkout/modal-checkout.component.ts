@@ -23,6 +23,6 @@ export class ModalCheckoutComponent {
 
   payLater() {
     this.dialogRef.close();
-    this.router.navigate(['/orders']);
+    this.router.navigate(['/user/orders']);
   }
 }
