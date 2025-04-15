@@ -2,11 +2,12 @@ package com.ecom.common.bean;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
-public class ApiResponse {
+public class ApiResponse implements Serializable {
     private String response_ref;
     private String response_datetime;
     private int status;

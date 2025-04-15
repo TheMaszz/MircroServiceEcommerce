@@ -10,6 +10,7 @@ import com.ecom.common.exception.BaseException;
 import com.ecom.product_service.exception.ProductException;
 import com.ecom.product_service.repository.ProductRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,6 +57,7 @@ public class ProductService extends BaseController {
         return res;
     }
 
+    @Cacheable(value = "product", key = "#id", unless = "#result == null")
     public ApiResponse getProductById(Long id) throws BaseException {
         ApiResponse res = new ApiResponse();
         try {

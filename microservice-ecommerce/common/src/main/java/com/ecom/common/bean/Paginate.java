@@ -2,8 +2,10 @@ package com.ecom.common.bean;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Paginate {
+public class Paginate implements Serializable {
     private int total;
 	private int limit;
 	private int page;

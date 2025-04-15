@@ -1,12 +1,12 @@
 package com.ecom.common.bean;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class ProductBean {
+public class ProductBean implements Serializable {
     private Long id;
     private String name;
     private String description;
