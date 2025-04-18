@@ -36,8 +36,8 @@ This project is a microservices-based e-commerce application built with modern t
 
 ---
 
-✉️ Kafka Integration: Forgot Password Flow
-To decouple services and ensure scalability, the Auth Service communicates with the Email Service via Kafka for the forgot password feature.
+** ✉️ Kafka Integration
+Forgot Password Flow To decouple services and ensure scalability, the Auth Service communicates with the Email Service via Kafka for the forgot password feature.
 
 🔁 Flow
 1. When a user requests a password reset, the Auth Service:
