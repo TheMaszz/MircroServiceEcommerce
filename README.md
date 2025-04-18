@@ -36,6 +36,22 @@ This project is a microservices-based e-commerce application built with modern t
 
 ---
 
+✉️ Kafka Integration: Forgot Password Flow
+To decouple services and ensure scalability, the Auth Service communicates with the Email Service via Kafka for the forgot password feature.
+
+🔁 Flow
+1. When a user requests a password reset, the Auth Service:
+   - Validates the user’s email
+   - Generates a reset token or link
+   - Publishes a "forgot-password" event to the Kafka topic
+
+2. The Email Service:
+     - Listens to the "forgot-password" topic
+     - Receives the event payload (email address, reset link)
+     - Sends a password reset email to the user
+
+---
+
 ## 💳 Stripe Integration
 
 Stripe is used for processing secure payments. The Payment Service is responsible for:
